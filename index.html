@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chess - 人机对战</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>♔ AI Chess ♚</h1>
+            <div class="header-controls">
+                <div class="control-group">
+                    <label>难度:</label>
+                    <select id="difficulty">
+                        <option value="1">等级 1 (入门 1000 ELO)</option>
+                        <option value="2">等级 2 (初级 1250 ELO)</option>
+                        <option value="3" selected>等级 3 (中级 1500 ELO)</option>
+                        <option value="4">等级 4 (高级 1750 ELO)</option>
+                        <option value="5">等级 5 (大师 2000 ELO)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>执子:</label>
+                    <select id="playerColor">
+                        <option value="white" selected>白方</option>
+                        <option value="black">黑方</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <aside class="history-panel">
+                <h3>♟ 移动历史</h3>
+                <div id="moveHistory"></div>
+                <div class="status">
+                    <span id="status">游戏进行中...</span>
+                </div>
+            </aside>
+
+            <section class="board-section">
+                <div id="board"></div>
+                <div id="thinking" class="thinking hidden">🤔 AI思考中...</div>
+            </section>
+
+            <aside class="control-panel">
+                <h3>♟ 控制面板</h3>
+                <button id="flipBoard" class="btn">🔄 翻转棋盘</button>
+                <button id="undoMove" class="btn">↩ 悔棋</button>
+                <button id="resign" class="btn">🏳 认输</button>
+                <button id="newGame" class="btn primary">⚔ 新游戏</button>
+                
+                <div class="game-info">
+                    <div class="info-row">
+                        <span>回合:</span>
+                        <span id="turnIndicator">白方</span>
+                    </div>
+                    <div class="info-row">
+                        <span>步数:</span>
+                        <span id="moveCount">0</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div id="gameOverModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="gameOverTitle">游戏结束</h2>
+            <p id="gameOverMessage"></p>
+            <button id="playAgain" class="btn primary">再来一局</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
