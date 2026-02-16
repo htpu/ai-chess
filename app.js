@@ -36,7 +36,16 @@ const translations = {
         youResigned: '你认输了',
         whiteWins: '白方获胜',
         blackWins: '黑方获胜',
-        playAgain: '再来一局'
+        playAgain: '再来一局',
+        illegalMove: '非法走法!',
+        promotion: '升变选择',
+        queen: '皇后',
+        rook: '车',
+        bishop: '象',
+        knight: '马',
+        sound: '音效',
+        on: '开',
+        off: '关'
     },
     en: {
         difficulty: 'Difficulty',
@@ -67,11 +76,26 @@ const translations = {
         youResigned: 'You resigned',
         whiteWins: 'White wins',
         blackWins: 'Black wins',
-        playAgain: 'Play Again'
+        playAgain: 'Play Again',
+        illegalMove: 'Illegal move!',
+        promotion: 'Promote to',
+        queen: 'Queen',
+        rook: 'Rook',
+        bishop: 'Bishop',
+        knight: 'Knight',
+        sound: 'Sound',
+        on: 'On',
+        off: 'Off'
     }
 };
 
-let currentLang = localStorage.getItem('language') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+function getSystemLanguage() {
+    const lang = navigator.language || navigator.userLanguage || 'zh';
+    return lang.startsWith('zh') ? 'zh' : 'en';
+}
+
+let currentLang = localStorage.getItem('language') || getSystemLanguage();
+let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 
 class ChessGame {
     constructor() {
@@ -86,6 +110,11 @@ class ChessGame {
         this.pendingAIMove = false;
         this.selectedSquare = null;
         this.validMoves = [];
+        this.lastMove = null;
+        this.pendingPromotion = null;
+
+        this.sounds = {};
+        this.loadSounds();
 
         this.init();
     }
@@ -94,12 +123,56 @@ class ChessGame {
         return translations[currentLang][key] || key;
     }
 
+    loadSounds() {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        this.playSound = (type) => {
+            if (!soundEnabled) return;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            const freq = type === 'move' ? 440 : type === 'capture' ? 330 : 520;
+            const duration = type === 'move' ? 0.1 : 0.15;
+            
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            
+            gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            osc.start(audioContext.currentTime);
+            osc.stop(audioContext.currentTime + duration);
+        };
+    }
+
     init() {
         document.getElementById('language').value = currentLang;
+        document.getElementById('soundToggle').checked = soundEnabled;
         this.updateUITexts();
+        
+        const savedGameState = localStorage.getItem('chessGameState');
+        let hasSavedGame = false;
+        if (savedGameState) {
+            try {
+                const state = JSON.parse(savedGameState);
+                hasSavedGame = state.fen && state.fen !== 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+            } catch (e) {
+                hasSavedGame = false;
+            }
+        }
+        
         this.initStockfish();
-        this.initBoard();
+        this.initBoard(hasSavedGame);
         this.bindEvents();
+        
+        if (hasSavedGame) {
+            this.loadGameState();
+        } else {
+            this.updateUI();
+        }
     }
 
     updateUITexts() {
@@ -119,16 +192,10 @@ class ChessGame {
         document.getElementById('undoMove').textContent = '↩ ' + this.t('undoMove');
         document.getElementById('resign').textContent = '🏳 ' + this.t('resign');
         document.getElementById('newGame').textContent = '⚔ ' + this.t('newGame');
-        document.querySelectorAll('.info-row span')[0].textContent = this.t('turn') + ':';
-        document.querySelectorAll('.info-row span')[1].textContent = this.t('moves') + ':';
+        document.querySelector('#turnIndicator').previousElementSibling.textContent = this.t('turn') + ':';
+        document.querySelector('#moveCount').previousElementSibling.textContent = this.t('moves') + ':';
         document.getElementById('gameOverTitle').textContent = this.t('gameOver');
         document.getElementById('playAgain').textContent = this.t('playAgain');
-    }
-
-    init() {
-        this.initStockfish();
-        this.initBoard();
-        this.bindEvents();
     }
 
     initStockfish() {
@@ -150,7 +217,6 @@ class ChessGame {
                     }
                 };
                 
-                // Stockfish加载完成后，检查是否有待执行的走棋
                 if (this.pendingAIMove) {
                     this.pendingAIMove = false;
                     this.makeAIMove();
@@ -161,10 +227,11 @@ class ChessGame {
             });
     }
 
-    initBoard() {
+    initBoard(hasSavedGame = false) {
         const config = {
             draggable: false,
             position: 'start',
+            showNotation: true,
             onDragStart: this.onDragStart.bind(this),
             onDrop: this.onDrop.bind(this),
             onSnapEnd: this.onSnapEnd.bind(this),
@@ -173,21 +240,18 @@ class ChessGame {
 
         this.board = Chessboard('board', config);
         
-        // 读取保存的玩家颜色
         const savedColor = localStorage.getItem('playerColor');
         if (savedColor) {
             document.getElementById('playerColor').value = savedColor;
             this.playerColor = savedColor;
         }
         
-        // 自动调整棋盘方向，使玩家棋子在下方
         const currentOrientation = this.board.orientation();
         if (currentOrientation !== this.playerColor) {
             this.board.flip();
         }
         
-        // 如果玩家执黑，AI先手
-        if (this.playerColor === 'black') {
+        if (!hasSavedGame && this.playerColor === 'black') {
             if (this.stockfishReady) {
                 this.makeAIMove();
             } else {
@@ -199,6 +263,7 @@ class ChessGame {
     bindEvents() {
         document.getElementById('difficulty').addEventListener('change', () => {
             this.showStatus(`${this.t('difficultyChanged')} ${document.getElementById('difficulty').value} ${this.t('level')}`);
+            this.saveGameState();
         });
 
         document.getElementById('playerColor').addEventListener('change', (e) => {
@@ -212,6 +277,14 @@ class ChessGame {
             localStorage.setItem('language', currentLang);
             this.updateUITexts();
             this.updateUI();
+        });
+
+        document.getElementById('soundToggle').addEventListener('change', (e) => {
+            soundEnabled = e.target.checked;
+            localStorage.setItem('soundEnabled', soundEnabled);
+            if (soundEnabled) {
+                this.playSound('move');
+            }
         });
 
         document.getElementById('flipBoard').addEventListener('click', () => {
@@ -241,13 +314,29 @@ class ChessGame {
         document.getElementById('board').addEventListener('mousedown', (e) => {
             this.handleBoardClick(e);
         });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'z' || e.key === 'Z') {
+                this.undoMove();
+            } else if (e.key === 'n' || e.key === 'N') {
+                this.resetGame();
+            } else if (e.key === 'f' || e.key === 'F') {
+                this.board.flip();
+            }
+        });
     }
 
     handleBoardClick(e) {
         if (this.gameOver || this.isThinking) return;
 
         const square = e.target.closest('[data-square]');
-        if (!square) return;
+        
+        if (!square) {
+            if (this.selectedSquare) {
+                this.clearSelection();
+            }
+            return;
+        }
 
         const squareId = square.dataset.square;
         if (!squareId) return;
@@ -261,7 +350,24 @@ class ChessGame {
         
         if (this.selectedSquare) {
             if (this.validMoves.includes(squareId)) {
-                this.moveFromSelected(squareId);
+                const isPromotion = this.game.moves({ 
+                    square: this.selectedSquare, 
+                    verbose: true 
+                }).some(m => m.to === squareId && m.flags.includes('p'));
+                
+                if (isPromotion) {
+                    this.pendingPromotion = { from: this.selectedSquare, to: squareId };
+                    this.showPromotionDialog(squareId);
+                    return;
+                }
+                
+                this.executeMove(this.selectedSquare, squareId);
+                return;
+            } else if (piece && piece.color === (this.playerColor === 'white' ? 'w' : 'b')) {
+                this.selectSquare(squareId);
+                return;
+            } else {
+                this.clearSelection();
                 return;
             }
         }
@@ -270,6 +376,63 @@ class ChessGame {
             this.selectSquare(squareId);
         } else {
             this.clearSelection();
+        }
+    }
+
+    showPromotionDialog(targetSquare) {
+        const modal = document.getElementById('promotionModal');
+        modal.classList.remove('hidden');
+        
+        const pieces = ['q', 'r', 'b', 'n'];
+        const container = document.getElementById('promotionOptions');
+        container.innerHTML = '';
+        
+        pieces.forEach(piece => {
+            const btn = document.createElement('button');
+            btn.className = 'promotion-btn';
+            const color = this.playerColor === 'white' ? 'w' : 'b';
+            btn.innerHTML = `<img src="https://chessboardjs.com/img/chesspieces/wikipedia/${piece === 'q' ? (color === 'w' ? 'wQ' : 'bQ') : piece === 'r' ? (color === 'w' ? 'wR' : 'bR') : piece === 'b' ? (color === 'w' ? 'wB' : 'bB') : (color === 'w' ? 'wN' : 'bN')}.png" alt="${piece}">`;
+            btn.onclick = () => {
+                this.executeMove(this.pendingPromotion.from, this.pendingPromotion.to, piece);
+                modal.classList.add('hidden');
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    executeMove(from, to, promotion = 'q') {
+        const captured = this.game.get(to) !== null;
+        
+        const move = this.game.move({
+            from: from,
+            to: to,
+            promotion: promotion
+        });
+
+        if (move) {
+            this.lastMove = { from, to };
+            this.addMoveToHistory(move);
+            this.board.position(this.game.fen());
+            this.highlightLastMove();
+            this.playSound(captured ? 'capture' : 'move');
+            this.updateUI();
+            this.saveGameState();
+
+            if (this.game.game_over()) {
+                this.handleGameOver();
+                return;
+            }
+
+            this.clearSelection();
+            this.makeAIMove();
+        } else {
+            this.showStatus(this.t('illegalMove'));
+            this.playSound('illegal');
+            setTimeout(() => {
+                const isPlayerTurn = (this.game.turn() === 'w' && this.playerColor === 'white') ||
+                                   (this.game.turn() === 'b' && this.playerColor === 'black');
+                this.showStatus(isPlayerTurn ? this.t('yourTurn') : this.t('aiThinking'));
+            }, 1500);
         }
     }
 
@@ -305,27 +468,15 @@ class ChessGame {
     clearHighlights() {
         document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
         document.querySelectorAll('.valid-move').forEach(el => el.classList.remove('valid-move'));
+        document.querySelectorAll('.last-move').forEach(el => el.classList.remove('last-move'));
     }
 
-    moveFromSelected(targetSquare) {
-        const move = this.game.move({
-            from: this.selectedSquare,
-            to: targetSquare,
-            promotion: 'q'
-        });
-
-        if (move) {
-            this.addMoveToHistory(move);
-            this.board.position(this.game.fen());
-            this.updateUI();
-
-            if (this.game.game_over()) {
-                this.handleGameOver();
-                return;
-            }
-
-            this.clearSelection();
-            this.makeAIMove();
+    highlightLastMove() {
+        if (this.lastMove) {
+            const fromEl = document.querySelector(`[data-square="${this.lastMove.from}"]`);
+            const toEl = document.querySelector(`[data-square="${this.lastMove.to}"]`);
+            if (fromEl) fromEl.classList.add('last-move');
+            if (toEl) toEl.classList.add('last-move');
         }
     }
 
@@ -414,8 +565,10 @@ class ChessGame {
         this.stockfish.terminate();
         this.initStockfish();
         
-        this.game.move(mistakeMove);
-        this.addMoveToHistory(this.game.move(mistakeMove));
+        const move = this.game.move(mistakeMove);
+        if (move) {
+            this.addMoveToHistory(move);
+        }
         this.updateUI();
         
         this.isThinking = false;
@@ -430,22 +583,31 @@ class ChessGame {
     handleAIMove(bestMove) {
         if (!this.isThinking) return;
         
+        const from = bestMove.substring(0, 2);
+        const to = bestMove.substring(2, 4);
+        const promotion = bestMove.length > 4 ? bestMove[4] : 'q';
+        
+        const captured = this.game.get(to) !== null;
+        
         const move = this.game.move({
-            from: bestMove.substring(0, 2),
-            to: bestMove.substring(2, 4),
-            promotion: bestMove.length > 4 ? bestMove[4] : 'q'
+            from: from,
+            to: to,
+            promotion: promotion
         });
 
         if (move) {
+            this.lastMove = { from, to };
             this.addMoveToHistory(move);
+            this.board.position(this.game.fen());
+            this.highlightLastMove();
+            this.playSound(captured ? 'capture' : 'move');
         }
 
-        this.board.position(this.game.fen());
-        
         this.isThinking = false;
         document.getElementById('thinking').classList.add('hidden');
         
         this.updateUI();
+        this.saveGameState();
 
         if (this.game.game_over()) {
             this.handleGameOver();
@@ -510,6 +672,7 @@ class ChessGame {
 
         if (this.game.in_check()) {
             this.showStatus(this.t('check'));
+            this.playSound('check');
         } else if (!this.gameOver) {
             const isPlayerTurn = (currentTurn === 'w' && this.playerColor === 'white') ||
                                (currentTurn === 'b' && this.playerColor === 'black');
@@ -534,13 +697,19 @@ class ChessGame {
         this.stockfishReady = false;
         this.initStockfish();
 
-        this.game.undo();
-        this.game.undo();
+        const movesToUndo = Math.min(2, this.moveHistory.length);
+        for (let i = 0; i < movesToUndo; i++) {
+            this.game.undo();
+        }
         
-        this.moveHistory = this.moveHistory.slice(0, -Math.ceil(this.moveHistory.length / 2) * 2);
+        this.moveHistory = this.moveHistory.slice(0, -movesToUndo);
+        
+        this.lastMove = null;
+        this.clearHighlights();
         
         this.board.position(this.game.fen());
         this.updateUI();
+        this.saveGameState();
     }
 
     resign() {
@@ -560,6 +729,7 @@ class ChessGame {
             const winner = this.game.turn() === 'white' ? this.t('blackWins') : this.t('whiteWins');
             title = winner;
             message = this.t('checkmate');
+            this.playSound('check');
         } else if (this.game.isDraw()) {
             title = this.t('draw');
             if (this.game.isStalemate()) {
@@ -586,11 +756,59 @@ class ChessGame {
         document.getElementById('gameOverModal').classList.remove('hidden');
     }
 
+    saveGameState() {
+        const state = {
+            fen: this.game.fen(),
+            moveHistory: this.moveHistory,
+            playerColor: this.playerColor,
+            difficulty: document.getElementById('difficulty').value
+        };
+        localStorage.setItem('chessGameState', JSON.stringify(state));
+    }
+
+    loadGameState() {
+        const saved = localStorage.getItem('chessGameState');
+        if (saved) {
+            try {
+                const state = JSON.parse(saved);
+                if (state.fen && state.fen !== 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1') {
+                    this.game.load(state.fen);
+                    this.board.position(this.game.fen());
+                    this.moveHistory = state.moveHistory || [];
+                    
+                    if (this.moveHistory.length > 0) {
+                        const lastMoveEntry = this.moveHistory[this.moveHistory.length - 1];
+                        const san = lastMoveEntry.san;
+                        
+                        if (san.includes('O-O-O')) {
+                            this.lastMove = lastMoveEntry.color === 'white' ? 
+                                { from: 'e1', to: 'c1' } : { from: 'e8', to: 'c8' };
+                        } else if (san.includes('O-O')) {
+                            this.lastMove = lastMoveEntry.color === 'white' ? 
+                                { from: 'e1', to: 'g1' } : { from: 'e8', to: 'g8' };
+                        } else if (san.length >= 4) {
+                            this.lastMove = {
+                                from: san.substring(0, 2),
+                                to: san.substring(2, 4)
+                            };
+                        }
+                        this.highlightLastMove();
+                    }
+                    
+                    this.updateUI();
+                }
+            } catch (e) {
+                console.error('Failed to load game state:', e);
+            }
+        }
+    }
+
     resetGame() {
         this.game.reset();
         this.board.position('start');
         
         this.clearSelection();
+        this.lastMove = null;
         
         const currentOrientation = this.board.orientation();
         const targetOrientation = this.playerColor;
@@ -612,6 +830,7 @@ class ChessGame {
         }
         
         this.updateUI();
+        this.saveGameState();
     }
 }
 

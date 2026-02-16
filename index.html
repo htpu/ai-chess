@@ -30,13 +30,17 @@
                         <option value="black" data-zh="黑方" data-en="Black">黑方</option>
                     </select>
                 </div>
+                <div class="control-group sound-group">
+                    <label>🔊</label>
+                    <input type="checkbox" id="soundToggle">
+                </div>
             </div>
             <div class="header-corner">
                 <select id="language">
                     <option value="zh">中文</option>
                     <option value="en">EN</option>
                 </select>
-                <div class="version">v1.2.6</div>
+                <div class="version">v1.3.6</div>
             </div>
         </header>
 
@@ -80,6 +84,13 @@
             <h2 id="gameOverTitle">游戏结束</h2>
             <p id="gameOverMessage"></p>
             <button id="playAgain" class="btn primary">再来一局</button>
+        </div>
+    </div>
+
+    <div id="promotionModal" class="modal hidden">
+        <div class="modal-content promotion-content">
+            <h3>升变选择</h3>
+            <div id="promotionOptions"></div>
         </div>
     </div>
 

@@ -12,5 +12,16 @@
   "type": "commonjs",
   "dependencies": {
     "playwright": "^1.58.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/htpu/ai-chess.git"
+  },
+  "bugs": {
+    "url": "https://github.com/htpu/ai-chess/issues"
+  },
+  "homepage": "https://github.com/htpu/ai-chess#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
   }
 }
