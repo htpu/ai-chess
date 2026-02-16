@@ -364,6 +364,9 @@ class GomokuGame {
         const block = this.findWinningMove('black');
         if (block !== null) return block;
         
+        const live3Block = this.findLiveThree('black');
+        if (live3Block !== null) return live3Block;
+        
         const attack = this.findBestMove('white', 3);
         if (attack !== null) return attack;
         
@@ -380,11 +383,14 @@ class GomokuGame {
         const block = this.findWinningMove('black');
         if (block !== null) return block;
         
-        const attack = this.findBestMove('white', 4);
-        if (attack !== null) return attack;
+        const doubleThreat = this.findDoubleThreat('black');
+        if (doubleThreat !== null) return doubleThreat;
         
-        const defend = this.findBestMove('black', 4);
-        if (defend !== null) return defend;
+        const live3Attack = this.findLiveThree('white');
+        if (live3Attack !== null) return live3Attack;
+        
+        const live3Block = this.findLiveThree('black');
+        if (live3Block !== null) return live3Block;
         
         return this.evaluateBestMove('white');
     }
@@ -396,10 +402,100 @@ class GomokuGame {
         const block = this.findWinningMove('black');
         if (block !== null) return block;
         
-        const doubleAttack = this.findDoubleThreat('black');
+        const doubleThreat = this.findDoubleThreat('black');
+        if (doubleThreat !== null) return doubleThreat;
+        
+        const doubleAttack = this.findDoubleThreat('white');
         if (doubleAttack !== null) return doubleAttack;
         
-        return this.evaluateBestMove('white');
+        const live3Attack = this.findLiveThree('white');
+        if (live3Attack !== null) return live3Attack;
+        
+        const live3Block = this.findLiveThree('black');
+        if (live3Block !== null) return live3Block;
+        
+        return this.minimaxMove('white', 3, -Infinity, Infinity);
+    }
+
+    findLiveThree(player) {
+        const threats = [];
+        
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] !== null) continue;
+            
+            this.board[i] = player;
+            
+            const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+            for (const [dr, dc] of directions) {
+                const count = this.countInDirection(i, player, dr, dc);
+                const openEnds = this.countOpenEnds(i, player, count);
+                
+                if (count === 3 && openEnds >= 2) {
+                    threats.push(i);
+                    break;
+                }
+            }
+            
+            this.board[i] = null;
+        }
+        
+        if (threats.length > 0) {
+            return threats[0];
+        }
+        return null;
+    }
+
+    minimaxMove(player, depth, alpha, beta) {
+        if (depth === 0) {
+            return this.evaluateBoard('white');
+        }
+        
+        const win = this.findWinningMove(player);
+        if (win !== null) {
+            return 100000 * (depth + 1);
+        }
+        
+        const candidates = this.getCandidateMoves().slice(0, 15);
+        
+        if (player === 'white') {
+            let maxScore = -Infinity;
+            for (const move of candidates) {
+                this.board[move] = player;
+                const score = this.minimaxMove('black', depth - 1, alpha, beta);
+                this.board[move] = null;
+                maxScore = Math.max(maxScore, score);
+                alpha = Math.max(alpha, score);
+                if (beta <= alpha) break;
+            }
+            return maxScore;
+        } else {
+            let minScore = Infinity;
+            for (const move of candidates) {
+                this.board[move] = player;
+                const score = this.minimaxMove('white', depth - 1, alpha, beta);
+                this.board[move] = null;
+                minScore = Math.min(minScore, score);
+                beta = Math.min(beta, score);
+                if (beta <= alpha) break;
+            }
+            return minScore;
+        }
+    }
+
+    evaluateBoard(player) {
+        let score = 0;
+        
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] === null) {
+                this.board[i] = player;
+                score += this.getPatternScore(i, player);
+                this.board[i] = 'black';
+                score -= this.getPatternScore(i, 'black');
+                this.board[i] = null;
+            }
+        }
+        
+        return score;
     }
 
     findWinningMove(player) {
@@ -427,7 +523,10 @@ class GomokuGame {
             
             const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
             for (const [dr, dc] of directions) {
-                if (this.countInDirection(i, player, dr, dc) >= 4) {
+                const count = this.countInDirection(i, player, dr, dc);
+                const openEnds = this.countOpenEnds(i, player, count);
+                
+                if (count >= 4 || (count === 3 && openEnds >= 2)) {
                     threatCount++;
                 }
             }
