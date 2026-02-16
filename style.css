@@ -248,6 +248,17 @@ main {
     pointer-events: none;
 }
 
+#board .valid-move.castling {
+    background: rgba(255, 165, 0, 0.5) !important;
+}
+
+#board .valid-move.castling::after {
+    content: '♔';
+    font-size: 24px;
+    color: #fff;
+    text-shadow: 0 0 3px #000;
+}
+
 .thinking {
     margin-top: 15px;
     padding: 15px 30px;

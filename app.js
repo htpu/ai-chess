@@ -410,7 +410,8 @@ class ChessGame {
         });
 
         if (move) {
-            this.lastMove = { from, to };
+            const isCastling = move.flags.includes('k') || move.flags.includes('q');
+            this.lastMove = { from, to, isCastling };
             this.addMoveToHistory(move);
             this.board.position(this.game.fen());
             this.highlightLastMove();
@@ -454,7 +455,14 @@ class ChessGame {
         this.validMoves.forEach(move => {
             const moveSquare = document.querySelector(`[data-square="${move}"]`);
             if (moveSquare) {
-                moveSquare.classList.add('valid-move');
+                const moveObj = moves.find(m => m.to === move);
+                const isCastling = moveObj && (moveObj.flags.includes('k') || moveObj.flags.includes('q'));
+                if (isCastling) {
+                    moveSquare.classList.add('valid-move');
+                    moveSquare.classList.add('castling');
+                } else {
+                    moveSquare.classList.add('valid-move');
+                }
             }
         });
     }
@@ -477,6 +485,22 @@ class ChessGame {
             const toEl = document.querySelector(`[data-square="${this.lastMove.to}"]`);
             if (fromEl) fromEl.classList.add('last-move');
             if (toEl) toEl.classList.add('last-move');
+
+            if (this.lastMove.isCastling) {
+                const color = this.lastMove.from[1] === '1' ? 'w' : 'b';
+                let rookFrom, rookTo;
+                if (this.lastMove.to === 'g1' || this.lastMove.to === 'g8') {
+                    rookFrom = color === 'w' ? 'h1' : 'h8';
+                    rookTo = color === 'w' ? 'f1' : 'f8';
+                } else {
+                    rookFrom = color === 'w' ? 'a1' : 'a8';
+                    rookTo = color === 'w' ? 'd1' : 'd8';
+                }
+                const rookFromEl = document.querySelector(`[data-square="${rookFrom}"]`);
+                const rookToEl = document.querySelector(`[data-square="${rookTo}"]`);
+                if (rookFromEl) rookFromEl.classList.add('last-move');
+                if (rookToEl) rookToEl.classList.add('last-move');
+            }
         }
     }
 
@@ -502,8 +526,11 @@ class ChessGame {
 
         if (move === null) return 'snapback';
 
+        const isCastling = move.flags.includes('k') || move.flags.includes('q');
+        this.lastMove = { from: source, to: target, isCastling };
         this.addMoveToHistory(move);
-        this.updateUI();
+        this.board.position(this.game.fen());
+        this.highlightLastMove();
 
         if (this.game.game_over()) {
             this.handleGameOver();
@@ -567,7 +594,11 @@ class ChessGame {
         
         const move = this.game.move(mistakeMove);
         if (move) {
+            const isCastling = move.flags.includes('k') || move.flags.includes('q');
+            this.lastMove = { from: move.from, to: move.to, isCastling };
             this.addMoveToHistory(move);
+            this.board.position(this.game.fen());
+            this.highlightLastMove();
         }
         this.updateUI();
         
@@ -596,7 +627,8 @@ class ChessGame {
         });
 
         if (move) {
-            this.lastMove = { from, to };
+            const isCastling = move.flags.includes('k') || move.flags.includes('q');
+            this.lastMove = { from, to, isCastling };
             this.addMoveToHistory(move);
             this.board.position(this.game.fen());
             this.highlightLastMove();
@@ -782,14 +814,15 @@ class ChessGame {
                         
                         if (san.includes('O-O-O')) {
                             this.lastMove = lastMoveEntry.color === 'white' ? 
-                                { from: 'e1', to: 'c1' } : { from: 'e8', to: 'c8' };
+                                { from: 'e1', to: 'c1', isCastling: true } : { from: 'e8', to: 'c8', isCastling: true };
                         } else if (san.includes('O-O')) {
                             this.lastMove = lastMoveEntry.color === 'white' ? 
-                                { from: 'e1', to: 'g1' } : { from: 'e8', to: 'g8' };
+                                { from: 'e1', to: 'g1', isCastling: true } : { from: 'e8', to: 'g8', isCastling: true };
                         } else if (san.length >= 4) {
                             this.lastMove = {
                                 from: san.substring(0, 2),
-                                to: san.substring(2, 4)
+                                to: san.substring(2, 4),
+                                isCastling: false
                             };
                         }
                         this.highlightLastMove();
