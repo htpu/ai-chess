@@ -233,9 +233,16 @@ class GomokuGame {
                 index = this.mediumAI();
         }
         
-        if (index !== null) {
-            this.placeStone(index, true);
+        if (index === null || this.board[index] !== null) {
+            const empty = this.board.map((v, i) => v === null ? i : -1).filter(i => i >= 0);
+            if (empty.length > 0) {
+                index = empty[Math.floor(Math.random() * empty.length)];
+            } else {
+                return;
+            }
         }
+        
+        this.placeStone(index, true);
     }
 
     evaluateMove(index, player) {
