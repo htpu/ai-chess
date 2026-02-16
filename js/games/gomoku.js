@@ -421,7 +421,69 @@ class GomokuGame {
         const live3Block = this.findLiveThree('black');
         if (live3Block !== null) return live3Block;
         
-        return this.minimaxMove('white', 3, -Infinity, Infinity);
+        return this.getBestMoveWithMinimax('white', 3);
+    }
+
+    getBestMoveWithMinimax(player, depth) {
+        const candidates = this.getCandidateMoves().slice(0, 10);
+        
+        if (candidates.length === 0) {
+            const center = Math.floor(this.boardSize / 2) * this.boardSize + Math.floor(this.boardSize / 2);
+            return this.board[center] === null ? center : this.findBestMove(player, 1);
+        }
+        
+        let bestMove = candidates[0];
+        let bestScore = -Infinity;
+        
+        for (const move of candidates) {
+            this.board[move] = player;
+            const score = this.minimaxScore('black', depth - 1, -Infinity, Infinity);
+            this.board[move] = null;
+            
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = move;
+            }
+        }
+        
+        return bestMove;
+    }
+
+    minimaxScore(player, depth, alpha, beta) {
+        if (depth === 0) {
+            return this.evaluateBoard('white');
+        }
+        
+        const win = this.findWinningMove(player);
+        if (win !== null) {
+            return 100000 * (depth + 1);
+        }
+        
+        const candidates = this.getCandidateMoves().slice(0, 10);
+        
+        if (player === 'white') {
+            let maxScore = -Infinity;
+            for (const move of candidates) {
+                this.board[move] = player;
+                const score = this.minimaxScore('black', depth - 1, alpha, beta);
+                this.board[move] = null;
+                maxScore = Math.max(maxScore, score);
+                alpha = Math.max(alpha, score);
+                if (beta <= alpha) break;
+            }
+            return maxScore;
+        } else {
+            let minScore = Infinity;
+            for (const move of candidates) {
+                this.board[move] = player;
+                const score = this.minimaxScore('white', depth - 1, alpha, beta);
+                this.board[move] = null;
+                minScore = Math.min(minScore, score);
+                beta = Math.min(beta, score);
+                if (beta <= alpha) break;
+            }
+            return minScore;
+        }
     }
 
     findLiveThree(player) {
