@@ -88,6 +88,11 @@ class GomokuGame {
     }
 
     placeStone(index, isAi = false) {
+        if (this.board[index] !== null) {
+            console.error('Attempt to place on occupied position:', index);
+            return;
+        }
+        
         this.undoStack.push({
             index: index,
             player: this.currentPlayer
@@ -233,13 +238,15 @@ class GomokuGame {
                 index = this.mediumAI();
         }
         
-        if (index === null || this.board[index] !== null) {
-            const empty = this.board.map((v, i) => v === null ? i : -1).filter(i => i >= 0);
-            if (empty.length > 0) {
-                index = empty[Math.floor(Math.random() * empty.length)];
-            } else {
-                return;
-            }
+        const emptySpots = this.board.map((v, i) => v === null ? i : -1).filter(i => i >= 0);
+        
+        if (index === null || this.board[index] !== null || !emptySpots.includes(index)) {
+            index = emptySpots[Math.floor(Math.random() * emptySpots.length)];
+        }
+        
+        if (index === undefined || this.board[index] !== null) {
+            console.error('AI move error:', index, this.board[index]);
+            return;
         }
         
         this.placeStone(index, true);
