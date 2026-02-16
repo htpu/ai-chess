@@ -6,100 +6,7 @@ const DIFFICULTY_SETTINGS = {
     5: { depth: 3, time: 500, errorRate: 0 }
 };
 
-const translations = {
-    zh: {
-        difficulty: '难度',
-        playerColor: '执子',
-        white: '白方',
-        black: '黑方',
-        moveHistory: '移动历史',
-        controlPanel: '控制面板',
-        flipBoard: '翻转棋盘',
-        undoMove: '悔棋',
-        resign: '认输',
-        newGame: '新游戏',
-        turn: '回合',
-        moves: '步数',
-        gameInProgress: '游戏进行中...',
-        yourTurn: '轮到你走棋',
-        aiThinking: 'AI思考中...',
-        check: '将军!',
-        difficultyChanged: '难度已切换为',
-        level: '级',
-        gameOver: '游戏结束',
-        checkmate: '将杀!',
-        draw: '和棋',
-        stalemate: '逼和 - 无子可动',
-        threefoldRep: '三次重复局面',
-        insufficientMaterial: '子力不足',
-        fiftyMoveRule: '五十步规则',
-        youResigned: '你认输了',
-        whiteWins: '白方获胜',
-        blackWins: '黑方获胜',
-        playAgain: '再来一局',
-        illegalMove: '非法走法!',
-        promotion: '升变选择',
-        queen: '皇后',
-        rook: '车',
-        bishop: '象',
-        knight: '马',
-        sound: '音效',
-        on: '开',
-        off: '关',
-        promotedTo: '升变为',
-        castled: '王车易位'
-    },
-    en: {
-        difficulty: 'Difficulty',
-        playerColor: 'Play as',
-        white: 'White',
-        black: 'Black',
-        moveHistory: 'Move History',
-        controlPanel: 'Control Panel',
-        flipBoard: 'Flip Board',
-        undoMove: 'Undo',
-        resign: 'Resign',
-        newGame: 'New Game',
-        turn: 'Turn',
-        moves: 'Moves',
-        gameInProgress: 'Game in progress...',
-        yourTurn: 'Your turn',
-        aiThinking: 'AI thinking...',
-        check: 'Check!',
-        difficultyChanged: 'Difficulty set to',
-        level: '',
-        gameOver: 'Game Over',
-        checkmate: 'Checkmate!',
-        draw: 'Draw',
-        stalemate: 'Stalemate',
-        threefoldRep: 'Threefold repetition',
-        insufficientMaterial: 'Insufficient material',
-        fiftyMoveRule: 'Fifty move rule',
-        youResigned: 'You resigned',
-        whiteWins: 'White wins',
-        blackWins: 'Black wins',
-        playAgain: 'Play Again',
-        illegalMove: 'Illegal move!',
-        promotion: 'Promote to',
-        queen: 'Queen',
-        rook: 'Rook',
-        bishop: 'Bishop',
-        knight: 'Knight',
-        sound: 'Sound',
-        on: 'On',
-        off: 'Off',
-        promotedTo: 'Promoted to',
-        castled: 'Castled'
-    }
-};
-
-function getSystemLanguage() {
-    const lang = navigator.language || navigator.userLanguage || 'zh';
-    return lang.startsWith('zh') ? 'zh' : 'en';
-}
-
-let currentLang = localStorage.getItem('language') || getSystemLanguage();
-let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+let soundEnabled = true;
 
 class ChessGame {
     constructor() {
@@ -123,15 +30,12 @@ class ChessGame {
         this.init();
     }
 
-    t(key) {
-        return translations[currentLang][key] || key;
-    }
-
     loadSounds() {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
         this.playSound = (type) => {
-            if (!soundEnabled) return;
+            const se = document.getElementById('soundToggle');
+            if (!se || !se.checked) return;
             
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -152,6 +56,14 @@ class ChessGame {
         };
     }
 
+    t(key) {
+        return window.t ? window.t(key) : key;
+    }
+
+    updateUITexts() {
+        // Handled by game-loader.js
+    }
+
     showToast(message) {
         const toast = document.getElementById('toast');
         toast.textContent = message;
@@ -163,9 +75,8 @@ class ChessGame {
     }
 
     init() {
-        document.getElementById('language').value = currentLang;
-        document.getElementById('soundToggle').checked = soundEnabled;
-        this.updateUITexts();
+        currentLang = document.getElementById('language').value;
+        soundEnabled = document.getElementById('soundToggle').checked;
         
         const savedGameState = localStorage.getItem('chessGameState');
         let hasSavedGame = false;
@@ -187,29 +98,6 @@ class ChessGame {
         } else {
             this.updateUI();
         }
-    }
-
-    updateUITexts() {
-        document.querySelector('.history-panel h3').textContent = this.t('moveHistory');
-        document.querySelector('.control-panel h3').textContent = this.t('controlPanel');
-        document.querySelectorAll('.control-group label')[0].textContent = this.t('difficulty') + ':';
-        document.querySelectorAll('.control-group label')[1].textContent = this.t('playerColor') + ':';
-        
-        document.querySelectorAll('#difficulty option').forEach(opt => {
-            opt.textContent = opt.dataset[currentLang];
-        });
-        document.querySelectorAll('#playerColor option').forEach(opt => {
-            opt.textContent = opt.dataset[currentLang];
-        });
-        
-        document.getElementById('flipBoard').textContent = '🔄 ' + this.t('flipBoard');
-        document.getElementById('undoMove').textContent = '↩ ' + this.t('undoMove');
-        document.getElementById('resign').textContent = '🏳 ' + this.t('resign');
-        document.getElementById('newGame').textContent = '⚔ ' + this.t('newGame');
-        document.querySelector('#turnIndicator').previousElementSibling.textContent = this.t('turn') + ':';
-        document.querySelector('#moveCount').previousElementSibling.textContent = this.t('moves') + ':';
-        document.getElementById('gameOverTitle').textContent = this.t('gameOver');
-        document.getElementById('playAgain').textContent = this.t('playAgain');
     }
 
     initStockfish() {
@@ -284,13 +172,6 @@ class ChessGame {
             this.playerColor = e.target.value;
             localStorage.setItem('playerColor', this.playerColor);
             this.resetGame();
-        });
-
-        document.getElementById('language').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            localStorage.setItem('language', currentLang);
-            this.updateUITexts();
-            this.updateUI();
         });
 
         document.getElementById('soundToggle').addEventListener('change', (e) => {

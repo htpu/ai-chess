@@ -1,0 +1,108 @@
+const GAMES = {
+    chess: {
+        id: 'chess',
+        name: { zh: '国际象棋', en: 'Chess' },
+        icon: '♔',
+        description: { zh: '人机对战 AI', en: 'Play vs AI' },
+        color: '#8b4513'
+    },
+    gomoku: {
+        id: 'gomoku',
+        name: { zh: '五子棋', en: 'Gomoku' },
+        icon: '●',
+        description: { zh: '经典五子棋', en: 'Classic Gomoku' },
+        color: '#2e5a1c'
+    }
+};
+
+let currentLang = localStorage.getItem('language') || 'zh';
+
+function getSystemLanguage() {
+    const lang = navigator.language || navigator.userLanguage || 'zh';
+    return lang.startsWith('zh') ? 'zh' : 'en';
+}
+
+currentLang = localStorage.getItem('language') || getSystemLanguage();
+
+function t(key) {
+    const translations = {
+        zh: {
+            selectGame: '选择游戏',
+            playNow: '开始游戏',
+            backToHome: '返回首页',
+            difficulty: '难度',
+            playerColor: '执子',
+            white: '白方',
+            black: '黑方',
+            sound: '音效',
+            on: '开',
+            off: '关'
+        },
+        en: {
+            selectGame: 'Select Game',
+            playNow: 'Play Now',
+            backToHome: 'Back to Home',
+            difficulty: 'Difficulty',
+            playerColor: 'Play as',
+            white: 'White',
+            black: 'Black',
+            sound: 'Sound',
+            on: 'On',
+            off: 'Off'
+        }
+    };
+    return translations[currentLang][key] || key;
+}
+
+function renderGameSelector() {
+    const container = document.getElementById('gameList');
+    container.innerHTML = '';
+    
+    Object.values(GAMES).forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.style.setProperty('--game-color', game.color);
+        card.onclick = () => startGame(game.id);
+        
+        card.innerHTML = `
+            <div class="game-icon">${game.icon}</div>
+            <div class="game-name">${game.name[currentLang]}</div>
+            <div class="game-desc">${game.description[currentLang]}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function startGame(gameId) {
+    localStorage.setItem('selectedGame', gameId);
+    window.location.href = 'game.html';
+}
+
+function loadGameSettings() {
+    const savedLang = localStorage.getItem('language');
+    if (savedLang) {
+        currentLang = savedLang;
+    }
+    
+    const langSelect = document.getElementById('language');
+    const soundToggle = document.getElementById('soundToggle');
+    
+    if (langSelect) langSelect.value = currentLang;
+    if (soundToggle) soundToggle.checked = localStorage.getItem('soundEnabled') !== 'false';
+}
+
+function initPlatform() {
+    loadGameSettings();
+    renderGameSelector();
+    
+    const langSelect = document.getElementById('language');
+    if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            localStorage.setItem('language', currentLang);
+            renderGameSelector();
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initPlatform);

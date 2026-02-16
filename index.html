@@ -3,102 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chess - 人机对战</title>
+    <title>AI Games - 人机对战平台</title>
     <meta name="version" content="v1.0.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .landing {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+        }
+
+        .landing h1 {
+            font-size: 3rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .landing .subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .game-selector {
+            text-align: center;
+        }
+
+        .game-selector h2 {
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        #gameList {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, #2a2a4a, #1e1e3a);
+            border-radius: 20px;
+            padding: 30px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--game-color, #444);
+            min-width: 180px;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border-color: #ffd700;
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .game-name {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .game-desc {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .language-selector select {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .version-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: #555;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-<header>
-            <h1>♔ AI Chess ♚</h1>
-            <div class="header-controls">
-                <div class="control-group">
-                    <label>难度:</label>
-                    <select id="difficulty">
-                        <option value="1" data-zh="等级 1 (入门 1000 ELO)" data-en="Level 1 (Beginner 1000)">等级 1 (入门 1000 ELO)</option>
-                        <option value="2" data-zh="等级 2 (初级 1250 ELO)" data-en="Level 2 (Intermediate 1250)">等级 2 (初级 1250 ELO)</option>
-                        <option value="3" selected data-zh="等级 3 (中级 1500 ELO)" data-en="Level 3 (Advanced 1500)">等级 3 (中级 1500 ELO)</option>
-                        <option value="4" data-zh="等级 4 (高级 1750 ELO)" data-en="Level 4 (Expert 1750)">等级 4 (高级 1750 ELO)</option>
-                        <option value="5" data-zh="等级 5 (大师 2000 ELO)" data-en="Level 5 (Master 2000)">等级 5 (大师 2000 ELO)</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>执子:</label>
-                    <select id="playerColor">
-                        <option value="white" selected data-zh="白方" data-en="White">白方</option>
-                        <option value="black" data-zh="黑方" data-en="Black">黑方</option>
-                    </select>
-                </div>
-                <div class="control-group sound-group">
-                    <label>🔊</label>
-                    <input type="checkbox" id="soundToggle">
-                </div>
-            </div>
-            <div class="header-corner">
-                <select id="language">
-                    <option value="zh">中文</option>
-                    <option value="en">EN</option>
-                </select>
-                <div class="version">v1.3.8</div>
-            </div>
-        </header>
-
-        <main>
-            <aside class="history-panel">
-                <h3>♟ 移动历史</h3>
-                <div id="moveHistory"></div>
-                <div class="status">
-                    <span id="status">游戏进行中...</span>
-                </div>
-            </aside>
-
-            <section class="board-section">
-                <div id="board"></div>
-                <div id="thinking" class="thinking hidden">🤔 AI思考中...</div>
-            </section>
-
-            <aside class="control-panel">
-                <h3>♟ 控制面板</h3>
-                <button id="flipBoard" class="btn">🔄 翻转棋盘</button>
-                <button id="undoMove" class="btn">↩ 悔棋</button>
-                <button id="resign" class="btn">🏳 认输</button>
-                <button id="newGame" class="btn primary">⚔ 新游戏</button>
-                
-                <div class="game-info">
-                    <div class="info-row">
-                        <span>回合:</span>
-                        <span id="turnIndicator">白方</span>
-                    </div>
-                    <div class="info-row">
-                        <span>步数:</span>
-                        <span id="moveCount">0</span>
-                    </div>
-                </div>
-            </aside>
-        </main>
-    </div>
-
-    <div id="gameOverModal" class="modal hidden">
-        <div class="modal-content">
-            <h2 id="gameOverTitle">游戏结束</h2>
-            <p id="gameOverMessage"></p>
-            <button id="playAgain" class="btn primary">再来一局</button>
+    <div class="landing">
+        <div class="language-selector">
+            <select id="language">
+                <option value="zh">中文</option>
+                <option value="en">EN</option>
+            </select>
         </div>
-    </div>
 
-    <div id="promotionModal" class="modal hidden">
-        <div class="modal-content promotion-content">
-            <h3>升变选择</h3>
-            <div id="promotionOptions"></div>
+        <h1>🎮 AI Games</h1>
+        <p class="subtitle">人机对战平台</p>
+
+        <div class="game-selector">
+            <h2 id="selectGameText">选择游戏</h2>
+            <div id="gameList"></div>
         </div>
+
+        <div class="version-info">v1.4.0</div>
     </div>
 
-    <div id="toast" class="toast hidden"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/platform.js"></script>
 </body>
 </html>
