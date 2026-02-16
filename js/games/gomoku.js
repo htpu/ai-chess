@@ -17,6 +17,13 @@ class GomokuGame {
         this.newGame();
     }
 
+    t(key) {
+        const zh = { black: '黑方', white: '白方', current: '当前', blackWins: '黑方获胜', whiteWins: '白方获胜' };
+        const en = { black: 'Black', white: 'White', current: 'Current', blackWins: 'Black wins', whiteWins: 'White wins' };
+        const lang = localStorage.getItem('language') || 'zh';
+        return (lang === 'en' ? en : zh)[key] || key;
+    }
+
     createBoard() {
         const board = document.getElementById('board');
         board.innerHTML = '';
@@ -516,28 +523,7 @@ class GomokuGame {
         
         return Array.from(candidates);
     }
-        
-        if (scores.size === 0) {
-            const center = Math.floor(this.boardSize / 2) * this.boardSize + Math.floor(this.boardSize / 2);
-            if (this.board[center] === null) return center;
-            
-            const empty = this.board.map((v, i) => v === null ? i : -1).filter(i => i >= 0);
-            return empty[Math.floor(Math.random() * empty.length)];
-        }
-        
-        let bestScore = 0;
-        let bestMove = null;
-        
-        scores.forEach((score, index) => {
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = index;
-            }
-        });
-        
-        return bestMove;
-    }
-
+         
     countConsecutive(index, player) {
         const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
         const row = Math.floor(index / this.boardSize);
