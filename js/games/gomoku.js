@@ -371,6 +371,9 @@ class GomokuGame {
         const block = this.findWinningMove('black');
         if (block !== null) return block;
         
+        const fourBlock = this.findFourInARow('black');
+        if (fourBlock !== null) return fourBlock;
+        
         const live3Block = this.findLiveThree('black');
         if (live3Block !== null) return live3Block;
         
@@ -390,6 +393,9 @@ class GomokuGame {
         const block = this.findWinningMove('black');
         if (block !== null) return block;
         
+        const fourBlock = this.findFourInARow('black');
+        if (fourBlock !== null) return fourBlock;
+        
         const doubleThreat = this.findDoubleThreat('black');
         if (doubleThreat !== null) return doubleThreat;
         
@@ -408,6 +414,9 @@ class GomokuGame {
         
         const block = this.findWinningMove('black');
         if (block !== null) return block;
+        
+        const fourBlock = this.findFourInARow('black');
+        if (fourBlock !== null) return fourBlock;
         
         const doubleThreat = this.findDoubleThreat('black');
         if (doubleThreat !== null) return doubleThreat;
@@ -576,6 +585,29 @@ class GomokuGame {
                 this.board[i] = null;
                 return i;
             }
+            this.board[i] = null;
+        }
+        return null;
+    }
+
+    findFourInARow(player) {
+        const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+        
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] !== null) continue;
+            
+            this.board[i] = player;
+            
+            for (const [dr, dc] of directions) {
+                const count = this.countInDirection(i, player, dr, dc);
+                const openEnds = this.countOpenEnds(i, player, count);
+                
+                if (count >= 4 && openEnds > 0) {
+                    this.board[i] = null;
+                    return i;
+                }
+            }
+            
             this.board[i] = null;
         }
         return null;
