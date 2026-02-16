@@ -14,7 +14,7 @@
             <h1 id="gameTitle">♔ AI Chess ♚</h1>
             <div class="header-controls">
                 <div class="control-group" id="difficultyGroup">
-                    <label id="difficultyLabel">难度:</label>
+                    <label id="difficultyLabel"></label>
                     <select id="difficulty">
                         <option value="1" data-zh="等级 1 (入门 1000 ELO)" data-en="Level 1 (Beginner 1000)">等级 1 (入门 1000 ELO)</option>
                         <option value="2" data-zh="等级 2 (初级 1250 ELO)" data-en="Level 2 (Intermediate 1250)">等级 2 (初级 1250 ELO)</option>
@@ -24,7 +24,7 @@
                     </select>
                 </div>
                 <div class="control-group" id="playerColorGroup">
-                    <label id="playerColorLabel">执子:</label>
+                    <label id="playerColorLabel"></label>
                     <select id="playerColor">
                         <option value="white" selected data-zh="白方" data-en="White">白方</option>
                         <option value="black" data-zh="黑方" data-en="Black">黑方</option>
@@ -41,38 +41,38 @@
                     <option value="en">EN</option>
                 </select>
                 <button id="backToHome" class="btn-small">🏠</button>
-                <div class="version">v1.4.0</div>
+                <div class="version">v1.5.1</div>
             </div>
         </header>
 
         <main>
             <aside class="history-panel">
-                <h3 id="historyTitle">♟ 移动历史</h3>
+                <h3 id="historyTitle"></h3>
                 <div id="moveHistory"></div>
                 <div class="status">
-                    <span id="status">游戏进行中...</span>
+                    <span id="status"></span>
                 </div>
             </aside>
 
             <section class="board-section">
                 <div id="board"></div>
-                <div id="thinking" class="thinking hidden">🤔 AI思考中...</div>
+                <div id="thinking" class="thinking hidden"></div>
             </section>
 
             <aside class="control-panel">
-                <h3 id="controlTitle">♟ 控制面板</h3>
-                <button id="flipBoard" class="btn">🔄 翻转棋盘</button>
-                <button id="undoMove" class="btn">↩ 悔棋</button>
-                <button id="resign" class="btn">🏳 认输</button>
-                <button id="newGame" class="btn primary">⚔ 新游戏</button>
+                <h3 id="controlTitle"></h3>
+                <button id="flipBoard" class="btn"></button>
+                <button id="undoMove" class="btn"></button>
+                <button id="resign" class="btn"></button>
+                <button id="newGame" class="btn primary"></button>
                 
                 <div class="game-info">
                     <div class="info-row">
-                        <span id="turnLabel">回合:</span>
-                        <span id="turnIndicator">白方</span>
+                        <span id="turnLabel"></span>
+                        <span id="turnIndicator"></span>
                     </div>
                     <div class="info-row">
-                        <span id="movesLabel">步数:</span>
+                        <span id="movesLabel"></span>
                         <span id="moveCount">0</span>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
 
     <div id="gameOverModal" class="modal hidden">
         <div class="modal-content">
-            <h2 id="gameOverTitle">游戏结束</h2>
+            <h2 id="gameOverTitle"></h2>
             <p id="gameOverMessage"></p>
             <button id="playAgain" class="btn primary">再来一局</button>
         </div>
@@ -90,7 +90,7 @@
 
     <div id="promotionModal" class="modal hidden">
         <div class="modal-content promotion-content">
-            <h3 id="promotionTitle">升变选择</h3>
+            <h3 id="promotionTitle"></h3>
             <div id="promotionOptions"></div>
         </div>
     </div>

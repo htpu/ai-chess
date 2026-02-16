@@ -105,8 +105,8 @@ class GomokuGame {
             this.gameOver = true;
             const winner = this.currentPlayer;
             this.highlightWin();
-            const winnerName = winner === 'black' ? '黑方' : '白方';
-            this.showMessage(`${winnerName}获胜!`, 'win');
+            const winnerName = winner === 'black' ? t('black') : t('white');
+            this.showMessage(`${t(winner === 'black' ? 'blackWins' : 'whiteWins')}`, 'win');
             return;
         }
         
@@ -231,39 +231,82 @@ class GomokuGame {
         }
     }
 
-    easyAI() {
-        const empty = this.board.map((v, i) => v === null ? i : -1).filter(i => i >= 0);
+    evaluateMove(index, player) {
+        this.board[index] = player;
+        let score = this.getPatternScore(index, player);
         
-        if (empty.length === 0) return null;
+        const opponent = player === 'white' ? 'black' : 'white';
+        const opponentScore = this.getPatternScore(index, opponent);
         
-        if (empty.length < this.boardSize * this.boardSize * 0.5) {
-            const attack = this.findBestMove('white', 3);
-            if (attack !== null) return attack;
-            const defend = this.findBestMove('black', 3);
-            if (defend !== null) return defend;
+        score += opponentScore * 1.2;
+        
+        this.board[index] = null;
+        
+        return score;
+    }
+
+    getPatternScore(index, player) {
+        const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+        const row = Math.floor(index / this.boardSize);
+        const col = index % this.boardSize;
+        
+        let totalScore = 0;
+        
+        for (const [dr, dc] of directions) {
+            let count = 1;
+            let openEnds = 0;
+            let blocked = 0;
+            
+            for (let d = 1; d < 5; d++) {
+                const r = row + dr * d;
+                const c = col + dc * d;
+                if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) {
+                    blocked++;
+                    break;
+                }
+                const cell = this.board[r * this.boardSize + c];
+                if (cell === player) count++;
+                else if (cell === null) {
+                    openEnds++;
+                    break;
+                }
+                else {
+                    blocked++;
+                    break;
+                }
+            }
+            
+            for (let d = 1; d < 5; d++) {
+                const r = row - dr * d;
+                const c = col - dc * d;
+                if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) {
+                    blocked++;
+                    break;
+                }
+                const cell = this.board[r * this.boardSize + c];
+                if (cell === player) count++;
+                else if (cell === null) {
+                    openEnds++;
+                    break;
+                }
+                else {
+                    blocked++;
+                    break;
+                }
+            }
+            
+            if (count >= 5) return 100000;
+            if (count === 4 && openEnds > 0) return 10000;
+            if (count === 4 && openEnds === 0) return 1000;
+            if (count === 3 && openEnds >= 2) return 1000;
+            if (count === 3 && openEnds === 1) return 100;
+            if (count === 2 && openEnds >= 2) return 100;
+            if (count === 2 && openEnds === 1) return 10;
+            
+            totalScore += count * count * (openEnds + 1);
         }
         
-        return empty[Math.floor(Math.random() * empty.length)];
-    }
-
-    mediumAI() {
-        const attack = this.findBestMove('white', 4);
-        if (attack !== null) return attack;
-        
-        const defend = this.findBestMove('black', 4);
-        if (defend !== null) return defend;
-        
-        return this.easyAI();
-    }
-
-    hardAI() {
-        const attack = this.findBestMove('white', 5);
-        if (attack !== null) return attack;
-        
-        const defend = this.findBestMove('black', 5);
-        if (defend !== null) return defend;
-        
-        return this.mediumAI();
+        return totalScore;
     }
 
     findBestMove(player, minCount) {
@@ -285,6 +328,194 @@ class GomokuGame {
                 scores.set(i, (scores.get(i) || 0) + score);
             }
         }
+        
+        if (scores.size === 0) {
+            const center = Math.floor(this.boardSize / 2) * this.boardSize + Math.floor(this.boardSize / 2);
+            if (this.board[center] === null) return center;
+            
+            const empty = this.board.map((v, i) => v === null ? i : -1).filter(i => i >= 0);
+            return empty[Math.floor(Math.random() * empty.length)];
+        }
+        
+        let bestScore = 0;
+        let bestMove = null;
+        
+        scores.forEach((score, index) => {
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = index;
+            }
+        });
+        
+        return bestMove;
+    }
+
+    easyAI() {
+        const win = this.findWinningMove('white');
+        if (win !== null) return win;
+        
+        const block = this.findWinningMove('black');
+        if (block !== null) return block;
+        
+        const attack = this.findBestMove('white', 3);
+        if (attack !== null) return attack;
+        
+        const defend = this.findBestMove('black', 3);
+        if (defend !== null) return defend;
+        
+        return this.findBestMove('white', 1);
+    }
+
+    mediumAI() {
+        const win = this.findWinningMove('white');
+        if (win !== null) return win;
+        
+        const block = this.findWinningMove('black');
+        if (block !== null) return block;
+        
+        const attack = this.findBestMove('white', 4);
+        if (attack !== null) return attack;
+        
+        const defend = this.findBestMove('black', 4);
+        if (defend !== null) return defend;
+        
+        return this.evaluateBestMove('white');
+    }
+
+    hardAI() {
+        const win = this.findWinningMove('white');
+        if (win !== null) return win;
+        
+        const block = this.findWinningMove('black');
+        if (block !== null) return block;
+        
+        const doubleAttack = this.findDoubleThreat('black');
+        if (doubleAttack !== null) return doubleAttack;
+        
+        return this.evaluateBestMove('white');
+    }
+
+    findWinningMove(player) {
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] !== null) continue;
+            
+            this.board[i] = player;
+            if (this.checkWin(i)) {
+                this.board[i] = null;
+                return i;
+            }
+            this.board[i] = null;
+        }
+        return null;
+    }
+
+    findDoubleThreat(player) {
+        const threats = [];
+        
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] !== null) continue;
+            
+            this.board[i] = player;
+            let threatCount = 0;
+            
+            const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+            for (const [dr, dc] of directions) {
+                if (this.countInDirection(i, player, dr, dc) >= 4) {
+                    threatCount++;
+                }
+            }
+            
+            if (threatCount >= 2) {
+                threats.push(i);
+            }
+            
+            this.board[i] = null;
+        }
+        
+        if (threats.length > 0) {
+            return threats[0];
+        }
+        return null;
+    }
+
+    countInDirection(index, player, dr, dc) {
+        const row = Math.floor(index / this.boardSize);
+        const col = index % this.boardSize;
+        
+        let count = 0;
+        
+        for (let d = 1; d < 5; d++) {
+            const r = row + dr * d;
+            const c = col + dc * d;
+            if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) break;
+            if (this.board[r * this.boardSize + c] === player) count++;
+            else break;
+        }
+        
+        for (let d = 1; d < 5; d++) {
+            const r = row - dr * d;
+            const c = col - dc * d;
+            if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) break;
+            if (this.board[r * this.boardSize + c] === player) count++;
+            else break;
+        }
+        
+        return count;
+    }
+
+    evaluateBestMove(player) {
+        let bestScore = -Infinity;
+        let bestMove = null;
+        
+        const candidates = this.getCandidateMoves();
+        
+        for (const index of candidates) {
+            const score = this.evaluateMove(index, player);
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = index;
+            }
+        }
+        
+        return bestMove || this.findBestMove(player, 1);
+    }
+
+    getCandidateMoves() {
+        const candidates = new Set();
+        const checked = new Set();
+        
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] !== null) {
+                const row = Math.floor(i / this.boardSize);
+                const col = i % this.boardSize;
+                
+                for (let dr = -2; dr <= 2; dr++) {
+                    for (let dc = -2; dc <= 2; dc++) {
+                        const r = row + dr;
+                        const c = col + dc;
+                        if (r >= 0 && r < this.boardSize && c >= 0 && c < this.boardSize) {
+                            const idx = r * this.boardSize + c;
+                            if (this.board[idx] === null && !checked.has(idx)) {
+                                candidates.add(idx);
+                                checked.add(idx);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        const center = Math.floor(this.boardSize / 2) * this.boardSize + Math.floor(this.boardSize / 2);
+        if (candidates.size === 0) {
+            return [center];
+        }
+        
+        if (!candidates.has(center)) {
+            candidates.add(center);
+        }
+        
+        return Array.from(candidates);
+    }
         
         if (scores.size === 0) {
             const center = Math.floor(this.boardSize / 2) * this.boardSize + Math.floor(this.boardSize / 2);
@@ -406,8 +637,8 @@ class GomokuGame {
         if (this.gameOver) return;
         
         this.gameOver = true;
-        const winner = this.currentPlayer === 'black' ? '白方' : '黑方';
-        this.showMessage(`${winner}获胜!`, 'win');
+        const winner = this.currentPlayer === 'black' ? t('white') : t('black');
+        this.showMessage(`${t(winner === t('white') ? 'whiteWins' : 'blackWins')}`, 'win');
     }
 
     newGame() {
@@ -439,12 +670,12 @@ class GomokuGame {
             currentPlayer.textContent = '●';
             currentPlayer.style.color = '#000';
             currentPlayer.style.textShadow = '0 0 5px #fff';
-            playerLabel.textContent = '当前: 黑方';
+            playerLabel.textContent = t('current') + ': ' + t('black');
         } else {
             currentPlayer.textContent = '○';
             currentPlayer.style.color = '#fff';
             currentPlayer.style.textShadow = '0 0 5px #000';
-            playerLabel.textContent = '当前: 白方';
+            playerLabel.textContent = t('current') + ': ' + t('white');
         }
     }
 
