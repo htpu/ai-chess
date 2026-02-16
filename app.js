@@ -6,6 +6,73 @@ const DIFFICULTY_SETTINGS = {
     5: { depth: 3, time: 500, errorRate: 0 }
 };
 
+const translations = {
+    zh: {
+        difficulty: '难度',
+        playerColor: '执子',
+        white: '白方',
+        black: '黑方',
+        moveHistory: '移动历史',
+        controlPanel: '控制面板',
+        flipBoard: '翻转棋盘',
+        undoMove: '悔棋',
+        resign: '认输',
+        newGame: '新游戏',
+        turn: '回合',
+        moves: '步数',
+        gameInProgress: '游戏进行中...',
+        yourTurn: '轮到你走棋',
+        aiThinking: 'AI思考中...',
+        check: '将军!',
+        difficultyChanged: '难度已切换为',
+        level: '级',
+        gameOver: '游戏结束',
+        checkmate: '将杀!',
+        draw: '和棋',
+        stalemate: '逼和 - 无子可动',
+        threefoldRep: '三次重复局面',
+        insufficientMaterial: '子力不足',
+        fiftyMoveRule: '五十步规则',
+        youResigned: '你认输了',
+        whiteWins: '白方获胜',
+        blackWins: '黑方获胜',
+        playAgain: '再来一局'
+    },
+    en: {
+        difficulty: 'Difficulty',
+        playerColor: 'Play as',
+        white: 'White',
+        black: 'Black',
+        moveHistory: 'Move History',
+        controlPanel: 'Control Panel',
+        flipBoard: 'Flip Board',
+        undoMove: 'Undo',
+        resign: 'Resign',
+        newGame: 'New Game',
+        turn: 'Turn',
+        moves: 'Moves',
+        gameInProgress: 'Game in progress...',
+        yourTurn: 'Your turn',
+        aiThinking: 'AI thinking...',
+        check: 'Check!',
+        difficultyChanged: 'Difficulty set to',
+        level: '',
+        gameOver: 'Game Over',
+        checkmate: 'Checkmate!',
+        draw: 'Draw',
+        stalemate: 'Stalemate',
+        threefoldRep: 'Threefold repetition',
+        insufficientMaterial: 'Insufficient material',
+        fiftyMoveRule: 'Fifty move rule',
+        youResigned: 'You resigned',
+        whiteWins: 'White wins',
+        blackWins: 'Black wins',
+        playAgain: 'Play Again'
+    }
+};
+
+let currentLang = localStorage.getItem('language') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+
 class ChessGame {
     constructor() {
         this.game = new Chess();
@@ -16,9 +83,46 @@ class ChessGame {
         this.gameOver = false;
         this.moveHistory = [];
         this.isThinking = false;
-        this.pendingAIMove = false; // 待执行的AI走棋
+        this.pendingAIMove = false;
+        this.selectedSquare = null;
+        this.validMoves = [];
 
         this.init();
+    }
+
+    t(key) {
+        return translations[currentLang][key] || key;
+    }
+
+    init() {
+        document.getElementById('language').value = currentLang;
+        this.updateUITexts();
+        this.initStockfish();
+        this.initBoard();
+        this.bindEvents();
+    }
+
+    updateUITexts() {
+        document.querySelector('.history-panel h3').textContent = this.t('moveHistory');
+        document.querySelector('.control-panel h3').textContent = this.t('controlPanel');
+        document.querySelectorAll('.control-group label')[0].textContent = this.t('difficulty') + ':';
+        document.querySelectorAll('.control-group label')[1].textContent = this.t('playerColor') + ':';
+        
+        document.querySelectorAll('#difficulty option').forEach(opt => {
+            opt.textContent = opt.dataset[currentLang];
+        });
+        document.querySelectorAll('#playerColor option').forEach(opt => {
+            opt.textContent = opt.dataset[currentLang];
+        });
+        
+        document.getElementById('flipBoard').textContent = '🔄 ' + this.t('flipBoard');
+        document.getElementById('undoMove').textContent = '↩ ' + this.t('undoMove');
+        document.getElementById('resign').textContent = '🏳 ' + this.t('resign');
+        document.getElementById('newGame').textContent = '⚔ ' + this.t('newGame');
+        document.querySelectorAll('.info-row span')[0].textContent = this.t('turn') + ':';
+        document.querySelectorAll('.info-row span')[1].textContent = this.t('moves') + ':';
+        document.getElementById('gameOverTitle').textContent = this.t('gameOver');
+        document.getElementById('playAgain').textContent = this.t('playAgain');
     }
 
     init() {
@@ -59,7 +163,7 @@ class ChessGame {
 
     initBoard() {
         const config = {
-            draggable: true,
+            draggable: false,
             position: 'start',
             onDragStart: this.onDragStart.bind(this),
             onDrop: this.onDrop.bind(this),
@@ -94,7 +198,7 @@ class ChessGame {
 
     bindEvents() {
         document.getElementById('difficulty').addEventListener('change', () => {
-            this.showStatus(`难度已切换为 ${document.getElementById('difficulty').value} 级`);
+            this.showStatus(`${this.t('difficultyChanged')} ${document.getElementById('difficulty').value} ${this.t('level')}`);
         });
 
         document.getElementById('playerColor').addEventListener('change', (e) => {
@@ -103,9 +207,15 @@ class ChessGame {
             this.resetGame();
         });
 
+        document.getElementById('language').addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            localStorage.setItem('language', currentLang);
+            this.updateUITexts();
+            this.updateUI();
+        });
+
         document.getElementById('flipBoard').addEventListener('click', () => {
             this.board.flip();
-            // 同步更新玩家颜色
             this.playerColor = this.board.orientation();
             document.getElementById('playerColor').value = this.playerColor;
             localStorage.setItem('playerColor', this.playerColor);
@@ -127,6 +237,96 @@ class ChessGame {
             document.getElementById('gameOverModal').classList.add('hidden');
             this.resetGame();
         });
+
+        document.getElementById('board').addEventListener('mousedown', (e) => {
+            this.handleBoardClick(e);
+        });
+    }
+
+    handleBoardClick(e) {
+        if (this.gameOver || this.isThinking) return;
+
+        const square = e.target.closest('[data-square]');
+        if (!square) return;
+
+        const squareId = square.dataset.square;
+        if (!squareId) return;
+
+        const currentTurn = this.game.turn();
+        const isPlayerTurn = (currentTurn === 'w' && this.playerColor === 'white') ||
+                            (currentTurn === 'b' && this.playerColor === 'black');
+        if (!isPlayerTurn) return;
+
+        const piece = this.game.get(squareId);
+        
+        if (this.selectedSquare) {
+            if (this.validMoves.includes(squareId)) {
+                this.moveFromSelected(squareId);
+                return;
+            }
+        }
+
+        if (piece && piece.color === (this.playerColor === 'white' ? 'w' : 'b')) {
+            this.selectSquare(squareId);
+        } else {
+            this.clearSelection();
+        }
+    }
+
+    selectSquare(squareId) {
+        this.clearHighlights();
+        this.selectedSquare = squareId;
+        
+        const squareEl = document.querySelector(`[data-square="${squareId}"]`);
+        if (squareEl) {
+            squareEl.classList.add('selected');
+        }
+
+        const moves = this.game.moves({
+            square: squareId,
+            verbose: true
+        });
+        this.validMoves = moves.map(m => m.to);
+
+        this.validMoves.forEach(move => {
+            const moveSquare = document.querySelector(`[data-square="${move}"]`);
+            if (moveSquare) {
+                moveSquare.classList.add('valid-move');
+            }
+        });
+    }
+
+    clearSelection() {
+        this.clearHighlights();
+        this.selectedSquare = null;
+        this.validMoves = [];
+    }
+
+    clearHighlights() {
+        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.valid-move').forEach(el => el.classList.remove('valid-move'));
+    }
+
+    moveFromSelected(targetSquare) {
+        const move = this.game.move({
+            from: this.selectedSquare,
+            to: targetSquare,
+            promotion: 'q'
+        });
+
+        if (move) {
+            this.addMoveToHistory(move);
+            this.board.position(this.game.fen());
+            this.updateUI();
+
+            if (this.game.game_over()) {
+                this.handleGameOver();
+                return;
+            }
+
+            this.clearSelection();
+            this.makeAIMove();
+        }
     }
 
     onDragStart(source, piece, position, orientation) {
@@ -299,22 +499,21 @@ class ChessGame {
 
         const turnIndicator = document.getElementById('turnIndicator');
         const currentTurn = this.game.turn();
-        turnIndicator.textContent = currentTurn === 'w' ? '白方' : '黑方';
+        turnIndicator.textContent = currentTurn === 'w' ? this.t('white') : this.t('black');
         turnIndicator.style.color = currentTurn === 'w' ? '#fff' : '#000';
         turnIndicator.style.background = currentTurn === 'w' ? '#8b4513' : '#f5deb3';
         turnIndicator.style.padding = '2px 8px';
         turnIndicator.style.borderRadius = '3px';
 
-        // chess.js 0.10.3 doesn't have turn_number(), calculate from history
         const fullMoves = Math.floor(this.game.history().length / 2) + 1;
         document.getElementById('moveCount').textContent = fullMoves;
 
         if (this.game.in_check()) {
-            this.showStatus('将军!');
+            this.showStatus(this.t('check'));
         } else if (!this.gameOver) {
             const isPlayerTurn = (currentTurn === 'w' && this.playerColor === 'white') ||
                                (currentTurn === 'b' && this.playerColor === 'black');
-            this.showStatus(isPlayerTurn ? '轮到你走棋' : 'AI思考中...');
+            this.showStatus(isPlayerTurn ? this.t('yourTurn') : this.t('aiThinking'));
         }
     }
 
@@ -326,6 +525,7 @@ class ChessGame {
         if (this.moveHistory.length === 0) return;
         
         this.isThinking = false;
+        this.clearSelection();
         document.getElementById('thinking').classList.add('hidden');
         
         if (this.stockfish) {
@@ -347,8 +547,8 @@ class ChessGame {
         if (this.gameOver) return;
         
         this.gameOver = true;
-        const winner = this.playerColor === 'white' ? '黑方' : '白方';
-        this.showGameOver(`${winner}获胜`, `你认输了`);
+        const winner = this.playerColor === 'white' ? this.t('blackWins') : this.t('whiteWins');
+        this.showGameOver(winner, this.t('youResigned'));
     }
 
     handleGameOver() {
@@ -357,24 +557,24 @@ class ChessGame {
         let title, message;
         
         if (this.game.isCheckmate()) {
-            const winner = this.game.turn() === 'white' ? '黑方' : '白方';
-            title = `${winner}获胜`;
-            message = `将杀!`;
+            const winner = this.game.turn() === 'white' ? this.t('blackWins') : this.t('whiteWins');
+            title = winner;
+            message = this.t('checkmate');
         } else if (this.game.isDraw()) {
-            title = '和棋';
+            title = this.t('draw');
             if (this.game.isStalemate()) {
-                message = '逼和 - 无子可动';
+                message = this.t('stalemate');
             } else if (this.game.isThreefoldRepetition()) {
-                message = '三次重复局面';
+                message = this.t('threefoldRep');
             } else if (this.game.isInsufficientMaterial()) {
-                message = '子力不足';
+                message = this.t('insufficientMaterial');
             } else {
-                message = '五十步规则';
+                message = this.t('fiftyMoveRule');
             }
         } else if (this.game.isGameOver()) {
-            const winner = this.game.turn() === 'white' ? '黑方' : '白方';
-            title = `${winner}获胜`;
-            message = '游戏结束';
+            const winner = this.game.turn() === 'white' ? this.t('blackWins') : this.t('whiteWins');
+            title = winner;
+            message = this.t('gameOver');
         }
         
         this.showGameOver(title, message);
@@ -390,9 +590,10 @@ class ChessGame {
         this.game.reset();
         this.board.position('start');
         
-        // 自动调整棋盘方向，使玩家棋子在下方
+        this.clearSelection();
+        
         const currentOrientation = this.board.orientation();
-        const targetOrientation = this.playerColor; // 'white' or 'black'
+        const targetOrientation = this.playerColor;
         if (currentOrientation !== targetOrientation) {
             this.board.flip();
         }
@@ -402,7 +603,6 @@ class ChessGame {
         this.isThinking = false;
         document.getElementById('thinking').classList.add('hidden');
         
-        // 如果玩家执黑，AI先手
         if (this.playerColor === 'black') {
             if (this.stockfishReady) {
                 this.makeAIMove();

@@ -43,6 +43,32 @@ header h1 {
     opacity: 0.7;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.header-corner {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#language {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border: 1px solid #8d6e63;
+    border-radius: 5px;
+    background: #4e342e;
+    color: #f5f5f5;
+    cursor: pointer;
+}
+
 .header-controls {
     display: flex;
     justify-content: center;
@@ -166,8 +192,34 @@ main {
     background: linear-gradient(135deg, #8b4513 0%, #6b3410 50%, #5d2e0d 100%);
 }
 
+#board img {
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.7));
+    -webkit-filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.7));
+}
+
 .highlight {
     box-shadow: inset 0 0 10px 3px rgba(255, 215, 0, 0.6);
+}
+
+#board .selected {
+    background: rgba(255, 215, 0, 0.7) !important;
+}
+
+#board .valid-move {
+    position: relative !important;
+}
+
+#board .valid-move::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 35%;
+    height: 35%;
+    background: rgba(0, 200, 0, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
 }
 
 .thinking {
