@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Games - 人机对战平台</title>
-    <meta name="version" content="v1.0.0">
+    <meta name="version" content="v1.5.0">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .landing {
@@ -121,8 +121,12 @@
             <div id="gameList"></div>
         </div>
 
-        <div class="version-info">v1.4.0</div>
+        <div class="version-info" id="versionDisplay"></div>
     </div>
+
+    <script>
+        document.getElementById('versionDisplay').textContent = document.querySelector('meta[name="version"]').content;
+    </script>
 
     <script src="js/platform.js"></script>
 </body>
