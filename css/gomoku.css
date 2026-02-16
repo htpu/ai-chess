@@ -129,34 +129,25 @@ header select {
     align-items: center;
     cursor: pointer;
     position: relative;
+    border-right: 1px solid var(--grid-line);
+    border-bottom: 1px solid var(--grid-line);
+}
+
+.cell:nth-child(15n) {
+    border-right: none;
+}
+
+.cell:nth-last-child(-n+15) {
+    border-bottom: none;
 }
 
 .cell::before {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, transparent 30%, var(--grid-line) 30%);
-    background-size: 100% 100%;
-}
-
-.cell::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
     background: var(--grid-line);
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-}
-
-.cell:horizontal::after {
-    width: 2px;
-    height: 100%;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%);
 }
 
 .stone {
