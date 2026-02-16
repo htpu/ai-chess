@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Gomoku</title>
+    <meta name="version" content="v1.0.0">
+    <link rel="stylesheet" href="css/gomoku.css">
+</head>
+<body>
+    <div class="gomoku-container">
+        <header>
+            <button id="backToHome" class="icon-btn">🏠</button>
+            <h1 id="gameTitle">● Gomoku ●</h1>
+            <select id="language">
+                <option value="zh">中文</option>
+                <option value="en">EN</option>
+            </select>
+        </header>
+
+        <main>
+            <div class="game-info">
+                <div class="player-info">
+                    <span id="currentPlayer">●</span>
+                    <span id="playerLabel">当前: 黑方</span>
+                </div>
+            </div>
+
+            <div class="gomoku-board" id="board"></div>
+
+            <div class="controls">
+                <button id="newGame" class="btn primary">新游戏</button>
+                <button id="undo" class="btn">撤销</button>
+                <button id="resign" class="btn">认输</button>
+            </div>
+
+            <div class="settings">
+                <label>
+                    <span id="modeLabel">模式:</span>
+                    <select id="gameMode">
+                        <option value="pvp" selected>双人对战</option>
+                        <option value="pvc">人机对战</option>
+                    </select>
+                </label>
+                <label>
+                    <span id="difficultyLabel">难度:</span>
+                    <select id="difficulty">
+                        <option value="1">简单</option>
+                        <option value="2" selected>中等</option>
+                        <option value="3">困难</option>
+                    </select>
+                </label>
+            </div>
+        </main>
+
+        <div id="message" class="message hidden"></div>
+    </div>
+
+    <script src="js/games/gomoku.js"></script>
+    <script src="js/gomoku-loader.js"></script>
+</body>
+</html>

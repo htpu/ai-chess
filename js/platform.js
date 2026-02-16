@@ -11,7 +11,7 @@ const GAMES = {
         name: { zh: '五子棋', en: 'Gomoku' },
         icon: '●',
         description: { zh: '经典五子棋', en: 'Classic Gomoku' },
-        color: '#2e5a1c'
+        color: '#FF6B35'
     },
     sudoku: {
         id: 'sudoku',
@@ -86,7 +86,7 @@ function startGame(gameId) {
     const gamePages = {
         chess: 'game.html',
         sudoku: 'sudoku.html',
-        gomoku: 'game.html'
+        gomoku: 'gomoku.html'
     };
     
     window.location.href = gamePages[gameId] || 'game.html';

@@ -1,0 +1,299 @@
+:root {
+    --bg-primary: #0A0C10;
+    --bg-secondary: #111827;
+    --grid-line: #1F2937;
+    --grid-line-thick: #374151;
+    --accent-orange: #FF6B35;
+    --accent-cyan: #00F2FF;
+    --accent-black: #1a1a2e;
+    --accent-white: #f0f0f0;
+    --accent-gold: #FFD700;
+    --error: #FF3131;
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --cell-size: 40px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gomoku-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    color: var(--accent-orange);
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+    letter-spacing: 4px;
+}
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--grid-line);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+}
+
+header select {
+    background: var(--bg-secondary);
+    border: 1px solid var(--grid-line);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    font-family: inherit;
+}
+
+.game-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--grid-line);
+}
+
+.player-info .icon {
+    font-size: 1.5rem;
+}
+
+.player-info.black .icon {
+    color: var(--accent-black);
+    text-shadow: 0 0 5px #fff;
+}
+
+.player-info.white .icon {
+    color: var(--accent-white);
+    text-shadow: 0 0 5px #000;
+}
+
+.player-info.current {
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+}
+
+#currentPlayer {
+    font-size: 1.5rem;
+}
+
+.gomoku-board {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    gap: 0;
+    background: var(--bg-secondary);
+    border: 2px solid var(--grid-line-thick);
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.cell {
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.cell::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 30%, var(--grid-line) 30%);
+    background-size: 100% 100%;
+}
+
+.cell::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: var(--grid-line);
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.cell:horizontal::after {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+.stone {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.stone.black {
+    background: radial-gradient(circle at 30% 30%, #444, #000);
+}
+
+.stone.white {
+    background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+}
+
+.stone.last-move {
+    box-shadow: 0 0 10px var(--accent-gold), 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: pulse 1s infinite;
+}
+
+.stone.win {
+    box-shadow: 0 0 15px var(--accent-gold), 0 0 30px var(--accent-gold);
+    animation: glow 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 10px var(--accent-gold); }
+    100% { box-shadow: 0 0 20px var(--accent-gold), 0 0 40px var(--accent-gold); }
+}
+
+.cell:hover:not(.occupied) {
+    background: rgba(255, 107, 53, 0.1);
+}
+
+.cell.occupied {
+    cursor: default;
+}
+
+.cell.win {
+    background: rgba(255, 215, 0, 0.2);
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--grid-line);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+}
+
+.btn.primary {
+    background: var(--accent-orange);
+    color: var(--bg-primary);
+    border-color: var(--accent-orange);
+    font-weight: bold;
+}
+
+.btn.primary:hover {
+    background: transparent;
+    color: var(--accent-orange);
+}
+
+.settings {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.settings label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.settings select {
+    background: var(--bg-secondary);
+    border: 1px solid var(--grid-line);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    font-family: inherit;
+}
+
+.message {
+    position: fixed;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-orange);
+    color: var(--bg-primary);
+    padding: 12px 24px;
+    font-weight: bold;
+    animation: fadeInOut 1.5s forwards;
+}
+
+.message.hidden {
+    display: none;
+}
+
+.message.win {
+    background: var(--accent-gold);
+}
+
+.message.error {
+    background: var(--error);
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+}
