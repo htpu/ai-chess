@@ -43,7 +43,9 @@ function t(key) {
             black: '黑方',
             sound: '音效',
             on: '开',
-            off: '关'
+            off: '关',
+            platformTitle: 'AI Games',
+            platformSubtitle: '人机对战平台'
         },
         en: {
             selectGame: 'Select Game',
@@ -55,7 +57,9 @@ function t(key) {
             black: 'Black',
             sound: 'Sound',
             on: 'On',
-            off: 'Off'
+            off: 'Off',
+            platformTitle: 'AI Games',
+            platformSubtitle: 'Play vs AI'
         }
     };
     return translations[currentLang][key] || key;
@@ -64,6 +68,13 @@ function t(key) {
 function renderGameSelector() {
     const container = document.getElementById('gameList');
     container.innerHTML = '';
+    
+    const pageTitle = document.getElementById('pageTitle');
+    const subtitle = document.getElementById('subtitle');
+    const selectGameText = document.getElementById('selectGameText');
+    if (pageTitle) pageTitle.textContent = t('platformTitle');
+    if (subtitle) subtitle.textContent = t('platformSubtitle');
+    if (selectGameText) selectGameText.textContent = t('selectGame');
     
     Object.values(GAMES).forEach(game => {
         const card = document.createElement('div');
