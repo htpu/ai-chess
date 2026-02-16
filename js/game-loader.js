@@ -140,8 +140,26 @@ function loadGame() {
         }
     });
     
-    if (gameId === 'chess' && typeof ChessGame !== 'undefined') {
-        currentGame = new ChessGame();
+    const gameTitle = document.getElementById('gameTitle');
+    const difficultyGroup = document.getElementById('difficultyGroup');
+    const playerColorGroup = document.getElementById('playerColorGroup');
+    
+    if (gameId === 'chess') {
+        if (gameTitle) gameTitle.textContent = `${GAMES[gameId].icon} AI ${GAMES[gameId].name[currentLang]} ${GAMES[gameId].icon}`;
+        if (difficultyGroup) difficultyGroup.style.display = 'flex';
+        if (playerColorGroup) playerColorGroup.style.display = 'flex';
+        
+        if (typeof ChessGame !== 'undefined') {
+            currentGame = new ChessGame();
+        }
+    } else if (gameId === 'sudoku') {
+        if (gameTitle) gameTitle.textContent = `${GAMES[gameId].icon} ${GAMES[gameId].name[currentLang]} ${GAMES[gameId].icon}`;
+        if (difficultyGroup) difficultyGroup.style.display = 'none';
+        if (playerColorGroup) playerColorGroup.style.display = 'none';
+        
+        if (typeof SudokuGame !== 'undefined') {
+            currentGame = new SudokuGame();
+        }
     }
 }
 

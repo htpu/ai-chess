@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sudoku</title>
+    <meta name="version" content="v1.0.0">
+    <link rel="stylesheet" href="css/sudoku.css">
+</head>
+<body>
+    <div class="sudoku-container">
+        <header>
+            <button id="backToHome" class="icon-btn">🏠</button>
+            <h1 id="gameTitle">⊞ Sudoku ⊞</h1>
+            <select id="language">
+                <option value="zh">中文</option>
+                <option value="en">EN</option>
+            </select>
+        </header>
+
+        <main>
+            <div class="sudoku-board" id="board"></div>
+            
+            <div class="numpad" id="numpad">
+                <button class="num-btn" data-num="1">1</button>
+                <button class="num-btn" data-num="2">2</button>
+                <button class="num-btn" data-num="3">3</button>
+                <button class="num-btn" data-num="4">4</button>
+                <button class="num-btn" data-num="5">5</button>
+                <button class="num-btn" data-num="6">6</button>
+                <button class="num-btn" data-num="7">7</button>
+                <button class="num-btn" data-num="8">8</button>
+                <button class="num-btn" data-num="9">9</button>
+                <button class="num-btn clear" data-num="0">⌫</button>
+            </div>
+
+            <div class="controls">
+                <button id="newGame" class="btn primary">新游戏</button>
+                <button id="solve" class="btn">解题</button>
+                <button id="erase" class="btn">擦除</button>
+                <button id="undo" class="btn">撤销</button>
+            </div>
+
+            <div class="settings">
+                <label>
+                    <span id="difficultyLabel">难度:</span>
+                    <select id="difficulty">
+                        <option value="easy">简单</option>
+                        <option value="medium" selected>中等</option>
+                        <option value="hard">困难</option>
+                        <option value="expert">专家</option>
+                    </select>
+                </label>
+            </div>
+        </main>
+
+        <div id="message" class="message hidden"></div>
+    </div>
+
+    <script src="js/games/sudoku.js"></script>
+    <script src="js/sudoku-loader.js"></script>
+</body>
+</html>

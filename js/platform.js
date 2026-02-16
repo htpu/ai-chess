@@ -12,6 +12,13 @@ const GAMES = {
         icon: '●',
         description: { zh: '经典五子棋', en: 'Classic Gomoku' },
         color: '#2e5a1c'
+    },
+    sudoku: {
+        id: 'sudoku',
+        name: { zh: '数独', en: 'Sudoku' },
+        icon: '⊞',
+        description: { zh: '逻辑推理挑战', en: 'Logic Challenge' },
+        color: '#00F2FF'
     }
 };
 
@@ -75,7 +82,14 @@ function renderGameSelector() {
 
 function startGame(gameId) {
     localStorage.setItem('selectedGame', gameId);
-    window.location.href = 'game.html';
+    
+    const gamePages = {
+        chess: 'game.html',
+        sudoku: 'sudoku.html',
+        gomoku: 'game.html'
+    };
+    
+    window.location.href = gamePages[gameId] || 'game.html';
 }
 
 function loadGameSettings() {
