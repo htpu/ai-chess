@@ -45,7 +45,9 @@ const translations = {
         knight: '马',
         sound: '音效',
         on: '开',
-        off: '关'
+        off: '关',
+        promotedTo: '升变为',
+        castled: '王车易位'
     },
     en: {
         difficulty: 'Difficulty',
@@ -85,7 +87,9 @@ const translations = {
         knight: 'Knight',
         sound: 'Sound',
         on: 'On',
-        off: 'Off'
+        off: 'Off',
+        promotedTo: 'Promoted to',
+        castled: 'Castled'
     }
 };
 
@@ -146,6 +150,16 @@ class ChessGame {
             osc.start(audioContext.currentTime);
             osc.stop(audioContext.currentTime + duration);
         };
+    }
+
+    showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.remove('hidden');
+        
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 1500);
     }
 
     init() {
@@ -410,7 +424,16 @@ class ChessGame {
         });
 
         if (move) {
-            const isCastling = move.flags.includes('k') || move.flags.includes('q');
+            const isPromotion = move.flags.includes('p');
+            const isCastling = !isPromotion && (move.flags.includes('k') || move.flags.includes('q'));
+            
+            if (isPromotion) {
+                const pieceName = this.t(promotion);
+                this.showToast(this.t('promotedTo') + ' ' + pieceName);
+            } else if (isCastling) {
+                this.showToast(this.t('castled'));
+            }
+            
             this.lastMove = { from, to, isCastling };
             this.addMoveToHistory(move);
             this.board.position(this.game.fen());
@@ -527,6 +550,15 @@ class ChessGame {
         if (move === null) return 'snapback';
 
         const isCastling = move.flags.includes('k') || move.flags.includes('q');
+        const isPromotion = move.flags.includes('p');
+        
+        if (isCastling) {
+            this.showToast(this.t('castled'));
+        } else if (isPromotion) {
+            const pieceName = this.t('q');
+            this.showToast(this.t('promotedTo') + ' ' + pieceName);
+        }
+        
         this.lastMove = { from: source, to: target, isCastling };
         this.addMoveToHistory(move);
         this.board.position(this.game.fen());
@@ -594,7 +626,16 @@ class ChessGame {
         
         const move = this.game.move(mistakeMove);
         if (move) {
-            const isCastling = move.flags.includes('k') || move.flags.includes('q');
+            const isPromotion = move.flags.includes('p');
+            const isCastling = !isPromotion && (move.flags.includes('k') || move.flags.includes('q'));
+            
+            if (isCastling) {
+                this.showToast(this.t('castled'));
+            } else if (isPromotion) {
+                const pieceName = this.t('q');
+                this.showToast(this.t('promotedTo') + ' ' + pieceName);
+            }
+            
             this.lastMove = { from: move.from, to: move.to, isCastling };
             this.addMoveToHistory(move);
             this.board.position(this.game.fen());
@@ -627,7 +668,16 @@ class ChessGame {
         });
 
         if (move) {
-            const isCastling = move.flags.includes('k') || move.flags.includes('q');
+            const isPromotion = move.flags.includes('p');
+            const isCastling = !isPromotion && (move.flags.includes('k') || move.flags.includes('q'));
+            
+            if (isPromotion) {
+                const pieceName = this.t(promotion);
+                this.showToast(this.t('promotedTo') + ' ' + pieceName);
+            } else if (isCastling) {
+                this.showToast(this.t('castled'));
+            }
+            
             this.lastMove = { from, to, isCastling };
             this.addMoveToHistory(move);
             this.board.position(this.game.fen());
