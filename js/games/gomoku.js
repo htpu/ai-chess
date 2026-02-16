@@ -577,38 +577,79 @@ class GomokuGame {
     }
 
     findWinningMove(player) {
-        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
-            if (this.board[i] !== null) continue;
-            
-            this.board[i] = player;
-            if (this.checkWin(i)) {
-                this.board[i] = null;
-                return i;
-            }
-            this.board[i] = null;
-        }
-        return null;
-    }
-
-    findFourInARow(player) {
         const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
         
         for (let i = 0; i < this.boardSize * this.boardSize; i++) {
             if (this.board[i] !== null) continue;
             
-            this.board[i] = player;
+            for (const [dr, dc] of directions) {
+                const row = Math.floor(i / this.boardSize);
+                const col = i % this.boardSize;
+                
+                let count = 0;
+                
+                for (let d = 1; d < 5; d++) {
+                    const r = row + dr * d;
+                    const c = col + dc * d;
+                    if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) break;
+                    if (this.board[r * this.boardSize + c] === player) count++;
+                    else break;
+                }
+                
+                for (let d = 1; d < 5; d++) {
+                    const r = row - dr * d;
+                    const c = col - dc * d;
+                    if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) break;
+                    if (this.board[r * this.boardSize + c] === player) count++;
+                    else break;
+                }
+                
+                if (count >= 4) return i;
+            }
+        }
+        return null;
+    }
+
+    findFourInARow(player) {
+        const threats = [];
+        const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+        
+        for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+            if (this.board[i] !== null) continue;
             
             for (const [dr, dc] of directions) {
-                const count = this.countInDirection(i, player, dr, dc);
-                const openEnds = this.countOpenEnds(i, player, count);
+                const row = Math.floor(i / this.boardSize);
+                const col = i % this.boardSize;
+                
+                let count = 0;
+                let openEnds = 0;
+                
+                for (let d = 1; d < 5; d++) {
+                    const r = row + dr * d;
+                    const c = col + dc * d;
+                    if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) break;
+                    if (this.board[r * this.boardSize + c] === player) count++;
+                    else if (this.board[r * this.boardSize + c] === null) { openEnds++; break; }
+                    else break;
+                }
+                
+                for (let d = 1; d < 5; d++) {
+                    const r = row - dr * d;
+                    const c = col - dc * d;
+                    if (r < 0 || r >= this.boardSize || c < 0 || c >= this.boardSize) break;
+                    if (this.board[r * this.boardSize + c] === player) count++;
+                    else if (this.board[r * this.boardSize + c] === null) { openEnds++; break; }
+                    else break;
+                }
                 
                 if (count >= 4 && openEnds > 0) {
-                    this.board[i] = null;
-                    return i;
+                    threats.push(i);
                 }
             }
-            
-            this.board[i] = null;
+        }
+        
+        if (threats.length > 0) {
+            return threats[0];
         }
         return null;
     }
