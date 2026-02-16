@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/htpu/ai-chess#readme",
   "devDependencies": {
-    "@playwright/test": "^1.58.2"
+    "@playwright/test": "^1.58.2",
+    "chess.js": "^0.10.3"
   }
 }
