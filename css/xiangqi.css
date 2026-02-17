@@ -1,8 +1,5 @@
 .xiangqi-board {
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(10, 1fr);
-    gap: 0;
+    position: relative;
     width: 100%;
     max-width: 540px;
     aspect-ratio: 9 / 10;
@@ -12,243 +9,187 @@
     box-shadow: 
         0 8px 30px rgba(0, 0, 0, 0.5),
         inset 0 0 20px rgba(0, 0, 0, 0.3);
-    padding: 10px;
-    position: relative;
+    margin: 0 auto;
 }
 
-.xiangqi-board::before {
-    content: '';
+.xq-grid {
     position: absolute;
-    top: 0;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+}
+
+.xq-h-line {
+    position: absolute;
     left: 0;
     right: 0;
+    height: 2px;
+    background: #5D3A1A;
+}
+
+.xq-v-line {
+    position: absolute;
+    top: 0;
     bottom: 0;
-    background: 
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 2px,
-            rgba(0, 0, 0, 0.03) 2px,
-            rgba(0, 0, 0, 0.03) 4px
-        );
-    pointer-events: none;
-    border-radius: 4px;
+    width: 2px;
+    background: #5D3A1A;
+}
+
+.xq-diagonal {
+    position: absolute;
+    width: 141.4px;
+    height: 2px;
+    background: #5D3A1A;
+    transform-origin: left center;
+}
+
+.xq-palace-box {
+    position: absolute;
+    width: 35%;
+    height: 20%;
+    border: 2px solid #5D3A1A;
+}
+
+.xq-palace-red {
+    top: 0;
+}
+
+.xq-palace-black {
+    bottom: 0;
+}
+
+.xq-river-area {
+    position: absolute;
+    top: 40%;
+    bottom: 40%;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .xq-cell {
+    position: absolute;
+    width: 11.11%;
+    height: 10%;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
     cursor: pointer;
-    background: linear-gradient(145deg, #DEB887 0%, #D2B48C 50%, #C4A67C 100%);
-    border: 1px solid #8B7355;
-    box-shadow: inset 0 0 5px rgba(139, 69, 19, 0.2);
-    transition: all 0.2s ease;
+    z-index: 1;
 }
 
 .xq-cell::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 1px,
-            rgba(139, 69, 19, 0.05) 1px,
-            rgba(139, 69, 19, 0.05) 2px
-        );
-    pointer-events: none;
-}
-
-.xq-cell:hover {
-    background: linear-gradient(145deg, #E8D4B8 0%, #DEC8A8 50%, #D0B898 100%);
-}
-
-.xq-cell.selected {
-    background: rgba(0, 255, 0, 0.3) !important;
-    box-shadow: 
-        inset 0 0 15px rgba(0, 255, 0, 0.5),
-        0 0 10px rgba(0, 255, 0, 0.3);
-}
-
-.xq-cell.selected::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    height: 90%;
-    border: 3px solid #00FF00;
+    width: 12px;
+    height: 12px;
+    background: transparent;
+    border: 2px solid #5D3A1A;
     border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.xq-cell:hover::before {
+    opacity: 0.5;
+}
+
+.xq-cell.selected::before {
+    opacity: 1;
+    border-color: #00ff00;
     box-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
-    pointer-events: none;
 }
 
-.xq-cell.valid-move {
-    background: rgba(0, 255, 255, 0.2) !important;
-}
-
-.xq-cell.valid-move::before {
+.xq-cell.valid-move::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 30%;
-    height: 30%;
+    width: 10px;
+    height: 10px;
     background: rgba(0, 242, 255, 0.7);
     border-radius: 50%;
-    box-shadow: 0 0 8px rgba(0, 242, 255, 0.8);
+    box-shadow: 0 0 6px rgba(0, 242, 255, 0.8);
 }
 
-.xq-cell.last-move {
-    background: rgba(255, 215, 0, 0.3) !important;
-    box-shadow: 
-        inset 0 0 10px rgba(255, 215, 0, 0.5),
-        0 0 0 3px #FFD700;
-}
-
-.xq-cell.valid-capture {
-    background: rgba(255, 0, 0, 0.2) !important;
-}
-
-.xq-cell.valid-capture::before {
+.xq-cell.valid-capture::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40%;
-    height: 40%;
-    background: rgba(255, 0, 0, 0.5);
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 0, 0, 0.4);
+    border: 2px solid #ff0000;
     border-radius: 50%;
-    border: 2px solid #FF0000;
-    box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.8);
+}
+
+.xq-cell.last-move::before {
+    opacity: 1;
+    border-color: #FFD700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
 }
 
 .xq-piece {
-    width: 85%;
-    height: 85%;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: clamp(10px, 3vw, 24px);
+    font-size: 22px;
     font-weight: bold;
     cursor: grab;
     user-select: none;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     transition: transform 0.15s ease;
+    box-shadow: 
+        0 3px 6px rgba(0, 0, 0, 0.4),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .xq-piece:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 .xq-piece.dragging {
     cursor: grabbing;
-    transform: scale(1.1);
+    transform: scale(1.15);
     z-index: 100;
 }
 
 .xq-piece.red {
     background: linear-gradient(145deg, #FF6B6B 0%, #EE5A5A 30%, #CC4444 70%, #AA3333 100%);
     color: #FFFFFF;
-    text-shadow: 
-        1px 1px 2px rgba(0, 0, 0, 0.8),
-        0 0 10px rgba(255, 107, 107, 0.5);
     border: 2px solid #8B0000;
-    box-shadow: 
-        0 4px 8px rgba(0, 0, 0, 0.4),
-        inset 0 -3px 6px rgba(0, 0, 0, 0.3),
-        inset 0 3px 6px rgba(255, 255, 255, 0.2);
-}
-
-.xq-piece.red::before {
-    content: '';
-    position: absolute;
-    top: 5%;
-    left: 10%;
-    width: 30%;
-    height: 20%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
-    border-radius: 50%;
 }
 
 .xq-piece.black {
     background: linear-gradient(145deg, #4A4A4A 0%, #333333 30%, #1A1A1A 70%, #000000 100%);
     color: #FFFFFF;
-    text-shadow: 
-        1px 1px 2px rgba(0, 0, 0, 0.8),
-        0 0 10px rgba(255, 255, 255, 0.3);
     border: 2px solid #000000;
-    box-shadow: 
-        0 4px 8px rgba(0, 0, 0, 0.5),
-        inset 0 -3px 6px rgba(0, 0, 0, 0.5),
-        inset 0 3px 6px rgba(255, 255, 255, 0.1);
-}
-
-.xq-piece.black::before {
-    content: '';
-    position: absolute;
-    top: 5%;
-    left: 10%;
-    width: 30%;
-    height: 20%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
-    border-radius: 50%;
-}
-
-.xq-cell.xq-palace-red {
-    background: linear-gradient(145deg, #FFDAB9 0%, #FFCBA4 50%, #FFB07C 100%);
-}
-
-.xq-cell.xq-palace-black {
-    background: linear-gradient(145deg, #E6D5AC 0%, #D4C090 50%, #C0A878 100%);
-}
-
-.xq-river {
-    background: linear-gradient(180deg, #87CEEB 0%, #6BB3D9 50%, #5A9FC4 100%);
-    border: 1px dashed #4A8AAA;
-}
-
-.xq-river::after {
-    content: '楚河      漢界';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(8px, 2vw, 14px);
-    color: #2C5F7C;
-    font-weight: bold;
-    writing-mode: horizontal-tb;
-    letter-spacing: 8px;
-    white-space: nowrap;
-}
-
-.xiangqi-board.flipped {
-    transform: rotate(180deg);
-}
-
-.xiangqi-board.flipped .xq-piece {
-    transform: rotate(180deg);
 }
 
 @media (max-width: 600px) {
-    .xiangqi-board {
-        max-width: 90vw;
-        padding: 5px;
+    .xq-piece {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
     }
     
-    .xq-piece {
-        font-size: clamp(8px, 2.5vw, 18px);
+    .xq-cell.valid-move::after,
+    .xq-cell.valid-capture::after {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .xq-cell.valid-capture::after {
+        width: 12px;
+        height: 12px;
     }
 }
 

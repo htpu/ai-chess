@@ -30,13 +30,13 @@ const INITIAL_BOARD = [
 ];
 
 const PIECE_NAMES = {
-    'K': { zh: '帅', en: 'K' },
-    'R': { zh: '車', en: 'R' },
-    'H': { zh: '馬', en: 'H' },
-    'E': { zh: '相', en: 'E' },
-    'A': { zh: '仕', en: 'A' },
-    'C': { zh: '炮', en: 'C' },
-    'P': { zh: '兵', en: 'P' }
+    'K': '帅',
+    'R': '車',
+    'H': '馬',
+    'E': '相',
+    'A': '仕',
+    'C': '炮',
+    'P': '兵'
 };
 
 class XiangqiGame {
@@ -142,6 +142,41 @@ class XiangqiGame {
         boardEl.innerHTML = '';
         boardEl.className = 'xiangqi-board';
 
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'xq-grid';
+        
+        for (let i = 0; i < 10; i++) {
+            const hLine = document.createElement('div');
+            hLine.className = 'xq-h-line';
+            hLine.style.top = `${(i + 1) * 10}%`;
+            hLine.style.left = '0';
+            hLine.style.right = '0';
+            gridContainer.appendChild(hLine);
+        }
+        
+        for (let i = 0; i < 9; i++) {
+            const vLine = document.createElement('div');
+            vLine.className = 'xq-v-line';
+            vLine.style.left = `${(i + 1) * 11.11}%`;
+            vLine.style.top = '0';
+            vLine.style.bottom = '0';
+            gridContainer.appendChild(vLine);
+        }
+
+        const palaceBox1 = document.createElement('div');
+        palaceBox1.className = 'xq-palace-box xq-palace-black';
+        palaceBox1.style.right = '0';
+        palaceBox1.style.top = '30%';
+        gridContainer.appendChild(palaceBox1);
+
+        const palaceBox2 = document.createElement('div');
+        palaceBox2.className = 'xq-palace-box xq-palace-red';
+        palaceBox2.style.right = '0';
+        palaceBox2.style.bottom = '30%';
+        gridContainer.appendChild(palaceBox2);
+
+        boardEl.appendChild(gridContainer);
+
         for (let row = 0; row < 10; row++) {
             for (let col = 0; col < 9; col++) {
                 const cell = document.createElement('div');
@@ -149,13 +184,8 @@ class XiangqiGame {
                 cell.dataset.row = row;
                 cell.dataset.col = col;
 
-                if (row === 4 || row === 5) {
-                    cell.classList.add('xq-river');
-                }
-
-                if ((row <= 2 || row >= 7) && (col >= 3 && col <= 5)) {
-                    cell.classList.add(row < 5 ? 'xq-palace-red' : 'xq-palace-black');
-                }
+                cell.style.left = `${col * 11.11}%`;
+                cell.style.top = `${row * 10}%`;
 
                 const piece = this.board[row][col];
                 if (piece) {
@@ -175,8 +205,8 @@ class XiangqiGame {
         const isRed = piece === piece.toUpperCase();
         pieceEl.classList.add(isRed ? 'red' : 'black');
         
-        const pieceName = PIECE_NAMES[piece.toUpperCase()] || { zh: piece, en: piece };
-        pieceEl.textContent = pieceName[currentLang] || pieceName.zh;
+        const pieceName = PIECE_NAMES[piece.toUpperCase()] || piece;
+        pieceEl.textContent = pieceName;
         
         return pieceEl;
     }
@@ -960,7 +990,7 @@ class XiangqiGame {
                 
                 const fromName = this.getPositionName(move.from.row, move.from.col);
                 const toName = this.getPositionName(move.to.row, move.to.col);
-                const pieceName = PIECE_NAMES[move.piece.toUpperCase()]?.[currentLang] || move.piece;
+                const pieceName = PIECE_NAMES[move.piece.toUpperCase()] || move.piece;
                 
                 row.innerHTML = `
                     <span class="move-number">${move.number}.</span>
