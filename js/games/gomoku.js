@@ -834,9 +834,11 @@ class GomokuGame {
 
     undo() {
         if (this.undoStack.length === 0) {
-            this.showMessage('没有可撤销的操作', 'error');
+            this.showMessage(t('noUndo'), 'error');
             return;
         }
+        
+        this.gameOver = false;
         
         let undoCount = this.mode === 'pvc' ? 2 : 1;
         
