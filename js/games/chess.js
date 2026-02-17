@@ -785,6 +785,7 @@ class ChessGame {
                         this.highlightLastMove();
                     }
                     
+                    this.gameStarted = true;
                     this.updateUI();
                 }
             } catch (e) {
