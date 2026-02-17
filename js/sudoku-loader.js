@@ -34,7 +34,9 @@ const translations = {
         wrong: '答案错误',
         noUndo: '没有可撤销的操作',
         solved: '已解题',
-        newGameStart: '新游戏开始'
+        newGameStart: '新游戏开始',
+        newGameTitle: '新游戏',
+        startGame: '开始'
     },
     en: {
         newGame: 'New Game',
@@ -50,7 +52,9 @@ const translations = {
         wrong: 'Wrong answer',
         noUndo: 'No actions to undo',
         solved: 'Solved',
-        newGameStart: 'New game started'
+        newGameStart: 'New game started',
+        newGameTitle: 'New Game',
+        startGame: 'Start'
     }
 };
 
@@ -64,22 +68,54 @@ function loadSudoku() {
     }
     
     currentLang = localStorage.getItem('language') || getSystemLanguage();
-    document.getElementById('language').value = currentLang;
     
     updateUITexts();
+    showNewGameModal();
     
     document.getElementById('backToHome').onclick = () => {
         window.location.href = 'index.html';
     };
     
-    document.getElementById('language').addEventListener('change', (e) => {
-        currentLang = e.target.value;
-        localStorage.setItem('language', currentLang);
-        updateUITexts();
-    });
+    document.getElementById('newGame').onclick = () => {
+        showNewGameModal();
+    };
+    
+    document.getElementById('startGame').onclick = () => {
+        startGameWithSettings();
+    };
     
     if (typeof SudokuGame !== 'undefined') {
         currentGame = new SudokuGame();
+    }
+}
+
+function showNewGameModal() {
+    const modal = document.getElementById('newGameModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        updateUITexts();
+        
+        document.querySelectorAll('#newGameModal #difficulty option').forEach(opt => {
+            opt.textContent = opt.dataset[currentLang];
+        });
+    }
+}
+
+function startGameWithSettings() {
+    const modal = document.getElementById('newGameModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    
+    if (currentGame && currentGame.newGame) {
+        currentGame.newGame();
+    }
+}
+
+function updateGameInfo(info) {
+    const gameInfo = document.getElementById('gameInfo');
+    if (gameInfo) {
+        gameInfo.textContent = info;
     }
 }
 
@@ -99,16 +135,13 @@ function updateUITexts() {
     const undoBtn = document.getElementById('undo');
     if (undoBtn) undoBtn.textContent = t('undo');
     
-    const diffLabel = document.getElementById('difficultyLabel');
-    if (diffLabel) diffLabel.textContent = t('difficulty') + ':';
+    const newGameTitle = document.getElementById('newGameTitle');
+    if (newGameTitle) newGameTitle.textContent = t('newGameTitle');
     
-    const diffSelect = document.getElementById('difficulty');
-    if (diffSelect) {
-        diffSelect.options[0].text = t('easy');
-        diffSelect.options[1].text = t('medium');
-        diffSelect.options[2].text = t('hard');
-        diffSelect.options[3].text = t('expert');
-    }
+    const startGameBtn = document.getElementById('startGame');
+    if (startGameBtn) startGameBtn.textContent = t('startGame');
+    
+    updateGameInfo('');
 }
 
 document.addEventListener('DOMContentLoaded', loadSudoku);

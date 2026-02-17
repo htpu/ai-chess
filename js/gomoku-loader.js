@@ -36,7 +36,9 @@ const translations = {
         white: '白方',
         blackWins: '黑方获胜',
         whiteWins: '白方获胜',
-        noUndo: '没有可撤销的操作'
+        noUndo: '没有可撤销的操作',
+        newGameTitle: '新游戏',
+        startGame: '开始'
     },
     en: {
         newGame: 'New Game',
@@ -54,7 +56,9 @@ const translations = {
         white: 'White',
         blackWins: 'Black wins',
         whiteWins: 'White wins',
-        noUndo: 'No actions to undo'
+        noUndo: 'No actions to undo',
+        newGameTitle: 'New Game',
+        startGame: 'Start'
     }
 };
 
@@ -68,22 +72,57 @@ function loadGomoku() {
     }
     
     currentLang = localStorage.getItem('language') || getSystemLanguage();
-    document.getElementById('language').value = currentLang;
     
     updateUITexts();
+    showNewGameModal();
     
     document.getElementById('backToHome').onclick = () => {
         window.location.href = 'index.html';
     };
     
-    document.getElementById('language').addEventListener('change', (e) => {
-        currentLang = e.target.value;
-        localStorage.setItem('language', currentLang);
-        updateUITexts();
-    });
+    document.getElementById('newGame').onclick = () => {
+        showNewGameModal();
+    };
+    
+    document.getElementById('startGame').onclick = () => {
+        startGameWithSettings();
+    };
     
     if (typeof GomokuGame !== 'undefined') {
         currentGame = new GomokuGame();
+    }
+}
+
+function showNewGameModal() {
+    const modal = document.getElementById('newGameModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        updateUITexts();
+        
+        document.querySelectorAll('#newGameModal #gameMode option').forEach(opt => {
+            opt.textContent = opt.dataset[currentLang];
+        });
+        document.querySelectorAll('#newGameModal #difficulty option').forEach(opt => {
+            opt.textContent = opt.dataset[currentLang];
+        });
+    }
+}
+
+function startGameWithSettings() {
+    const modal = document.getElementById('newGameModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    
+    if (currentGame && currentGame.newGame) {
+        currentGame.newGame();
+    }
+}
+
+function updateGameInfo(info) {
+    const gameInfo = document.getElementById('gameInfo');
+    if (gameInfo) {
+        gameInfo.textContent = info;
     }
 }
 
@@ -100,27 +139,13 @@ function updateUITexts() {
     const resignBtn = document.getElementById('resign');
     if (resignBtn) resignBtn.textContent = t('resign');
     
-    const modeLabel = document.getElementById('modeLabel');
-    if (modeLabel) modeLabel.textContent = t('mode') + ':';
+    const newGameTitle = document.getElementById('newGameTitle');
+    if (newGameTitle) newGameTitle.textContent = t('newGameTitle');
     
-    const diffLabel = document.getElementById('difficultyLabel');
-    if (diffLabel) diffLabel.textContent = t('difficulty') + ':';
+    const startGameBtn = document.getElementById('startGame');
+    if (startGameBtn) startGameBtn.textContent = t('startGame');
     
-    const modeSelect = document.getElementById('gameMode');
-    if (modeSelect) {
-        modeSelect.options[0].text = t('pvp');
-        modeSelect.options[1].text = t('pvc');
-    }
-    
-    const diffSelect = document.getElementById('difficulty');
-    if (diffSelect) {
-        diffSelect.options[0].text = t('easy');
-        diffSelect.options[1].text = t('medium');
-        diffSelect.options[2].text = t('hard');
-    }
-    
-    const playerLabel = document.getElementById('playerLabel');
-    if (playerLabel) playerLabel.textContent = t('current') + ': ' + t('black');
+    updateGameInfo('');
 }
 
 document.addEventListener('DOMContentLoaded', loadGomoku);

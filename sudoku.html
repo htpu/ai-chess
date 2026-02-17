@@ -14,21 +14,13 @@
                 <button id="backToHome" class="icon-btn">🏠</button>
                 <h1 id="gameTitle">⊞ Sudoku ⊞</h1>
             </div>
+            <div class="toolbar-center">
+                <div class="game-info-bar">
+                    <span id="gameInfo">-</span>
+                </div>
+            </div>
             <div class="toolbar-right">
-                <label>
-                    <span id="difficultyLabel"></span>
-                    <select id="difficulty">
-                        <option value="easy"></option>
-                        <option value="medium" selected></option>
-                        <option value="hard"></option>
-                        <option value="expert"></option>
-                    </select>
-                </label>
-                <button id="newGame" class="btn primary small"></button>
-                <select id="language">
-                    <option value="zh">中文</option>
-                    <option value="en">EN</option>
-                </select>
+                <button id="newGame" class="btn primary"></button>
             </div>
         </header>
 
@@ -56,6 +48,24 @@
         </main>
 
         <div id="message" class="message hidden"></div>
+    </div>
+
+    <div id="newGameModal" class="modal">
+        <div class="modal-content">
+            <h2 id="newGameTitle"></h2>
+            <div class="modal-options">
+                <div class="option-group">
+                    <label id="difficultyLabel"></label>
+                    <select id="difficulty">
+                        <option value="easy" data-zh="简单" data-en="Easy">简单</option>
+                        <option value="medium" selected data-zh="中等" data-en="Medium">中等</option>
+                        <option value="hard" data-zh="困难" data-en="Hard">困难</option>
+                        <option value="expert" data-zh="专家" data-en="Expert">专家</option>
+                    </select>
+                </div>
+            </div>
+            <button id="startGame" class="btn primary"></button>
+        </div>
     </div>
 
     <script src="js/games/sudoku.js"></script>

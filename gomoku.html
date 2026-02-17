@@ -15,32 +15,12 @@
                 <h1 id="gameTitle">● Gomoku ●</h1>
             </div>
             <div class="toolbar-center">
-                <div class="player-indicator">
-                    <span id="currentPlayer">●</span>
-                    <span id="playerLabel"></span>
+                <div class="game-info-bar">
+                    <span id="gameInfo">-</span>
                 </div>
             </div>
             <div class="toolbar-right">
-                <label>
-                    <span id="modeLabel"></span>
-                    <select id="gameMode">
-                        <option value="pvp" selected></option>
-                        <option value="pvc"></option>
-                    </select>
-                </label>
-                <label>
-                    <span id="difficultyLabel"></span>
-                    <select id="difficulty">
-                        <option value="1"></option>
-                        <option value="2" selected></option>
-                        <option value="3"></option>
-                    </select>
-                </label>
-                <button id="newGame" class="btn primary small"></button>
-                <select id="language">
-                    <option value="zh">中文</option>
-                    <option value="en">EN</option>
-                </select>
+                <button id="newGame" class="btn primary"></button>
             </div>
         </header>
 
@@ -54,6 +34,30 @@
         </main>
 
         <div id="message" class="message hidden"></div>
+    </div>
+
+    <div id="newGameModal" class="modal">
+        <div class="modal-content">
+            <h2 id="newGameTitle"></h2>
+            <div class="modal-options">
+                <div class="option-group">
+                    <label id="modeLabel"></label>
+                    <select id="gameMode">
+                        <option value="pvp" data-zh="双人对战" data-en="PvP">双人对战</option>
+                        <option value="pvc" selected data-zh="人机对战" data-en="PvC">人机对战</option>
+                    </select>
+                </div>
+                <div class="option-group" id="difficultyGroup">
+                    <label id="difficultyLabel"></label>
+                    <select id="difficulty">
+                        <option value="1" data-zh="简单" data-en="Easy">简单</option>
+                        <option value="2" selected data-zh="中等" data-en="Medium">中等</option>
+                        <option value="3" data-zh="困难" data-en="Hard">困难</option>
+                    </select>
+                </div>
+            </div>
+            <button id="startGame" class="btn primary"></button>
+        </div>
     </div>
 
     <script src="js/games/gomoku.js"></script>
