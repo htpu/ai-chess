@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="AI Chess - Play chess against AI with multiple difficulty levels">
     <title>AI Chess</title>
-    <meta name="version" content="v1.9.5">
+    <meta name="version" content="v1.9.6">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♔</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -30,15 +30,15 @@
         <main role="main">
             <section class="board-section" aria-label="棋盘">
                 <div id="board" role="application" aria-label="国际象棋棋盘"></div>
-                <div class="board-controls" role="group" aria-label="游戏控制">
-                    <button id="undoMove" class="btn" aria-label="撤销上一步"></button>
-                    <button id="resign" class="btn" aria-label="认输"></button>
-                </div>
                 <div id="thinking" class="thinking hidden" role="status" aria-live="assertive"></div>
             </section>
 
             <aside class="side-panel" role="complementary" aria-label="游戏信息">
                 <div class="control-panel">
+                    <div class="board-controls" role="group" aria-label="游戏控制">
+                        <button id="undoMove" class="btn" aria-label="撤销上一步"></button>
+                        <button id="resign" class="btn" aria-label="认输"></button>
+                    </div>
                     <h3 id="controlTitle"></h3>
                     <div class="game-info">
                         <div class="info-row">
