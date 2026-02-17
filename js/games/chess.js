@@ -15,6 +15,7 @@ class ChessGame {
         this.stockfish = null;
         this.stockfishReady = false;
         this.playerColor = 'white';
+        this.gameStarted = false;
         this.gameOver = false;
         this.moveHistory = [];
         this.isThinking = false;
@@ -481,6 +482,8 @@ class ChessGame {
     }
 
     makeAIMove() {
+        if (!this.gameStarted) return;
+        
         if (!this.stockfish || !this.stockfishReady) {
             console.log('Stockfish not ready, using random move');
             const moves = this.game.moves();
@@ -827,6 +830,7 @@ class ChessGame {
             localStorage.setItem('playerColor', this.playerColor);
         }
         
+        this.gameStarted = true;
         this.resetGame();
     }
 
