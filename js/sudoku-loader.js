@@ -70,7 +70,6 @@ function loadSudoku() {
     currentLang = localStorage.getItem('language') || getSystemLanguage();
     
     updateUITexts();
-    showNewGameModal();
     
     document.getElementById('backToHome').onclick = () => {
         window.location.href = 'index.html';

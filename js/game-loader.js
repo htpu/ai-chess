@@ -132,7 +132,6 @@ function loadGame() {
     currentLang = localStorage.getItem('language') || getSystemLanguage();
     
     updateUITexts();
-    showNewGameModal();
     
     document.getElementById('backToHome').onclick = () => {
         window.location.href = 'index.html';
@@ -156,6 +155,7 @@ function loadGame() {
         if (typeof ChessGame !== 'undefined') {
             currentGame = new ChessGame();
             currentGame.createBoard();
+            window.chessGame = currentGame;
         }
     } else if (gameId === 'sudoku') {
         if (gameTitle) gameTitle.textContent = `${GAMES[gameId].icon} ${GAMES[gameId].name[currentLang]} ${GAMES[gameId].icon}`;
@@ -201,31 +201,26 @@ function updateGameInfo(info) {
 }
 
 function updateUITexts() {
-    document.getElementById('historyTitle').textContent = t('moveHistory');
-    document.getElementById('controlTitle').textContent = t('controlPanel');
-    document.getElementById('turnLabel').textContent = t('turn') + ':';
-    document.getElementById('movesLabel').textContent = t('moves') + ':';
-    document.getElementById('flipBoard').textContent = t('flipBoard');
-    document.getElementById('undoMove').textContent = t('undoMove');
-    document.getElementById('resign').textContent = t('resign');
-    document.getElementById('newGame').textContent = t('newGame');
-    document.getElementById('gameOverTitle').textContent = t('gameOver');
-    document.getElementById('playAgain').textContent = t('playAgain');
-    document.getElementById('promotionTitle').textContent = t('promotion');
+    const el = (id) => document.getElementById(id);
     
-    if (document.getElementById('newGameTitle')) {
-        document.getElementById('newGameTitle').textContent = t('newGameTitle');
-    }
-    if (document.getElementById('startGame')) {
-        document.getElementById('startGame').textContent = t('startGame');
-    }
+    if (el('historyTitle')) el('historyTitle').textContent = t('moveHistory');
+    if (el('controlTitle')) el('controlTitle').textContent = t('controlPanel');
+    if (el('turnLabel')) el('turnLabel').textContent = t('turn') + ':';
+    if (el('movesLabel')) el('movesLabel').textContent = t('moves') + ':';
+    if (el('undoMove')) el('undoMove').textContent = t('undoMove');
+    if (el('resign')) el('resign').textContent = t('resign');
+    if (el('newGame')) el('newGame').textContent = t('newGame');
+    if (el('gameOverTitle')) el('gameOverTitle').textContent = t('gameOver');
+    if (el('playAgain')) el('playAgain').textContent = t('playAgain');
+    if (el('promotionTitle')) el('promotionTitle').textContent = t('promotion');
     
-    document.querySelectorAll('#difficulty option').forEach(opt => {
-        opt.textContent = opt.dataset[currentLang];
-    });
-    document.querySelectorAll('#playerColor option').forEach(opt => {
-        opt.textContent = opt.dataset[currentLang];
-    });
+    if (el('newGameTitle')) el('newGameTitle').textContent = t('newGameTitle');
+    if (el('startGame')) el('startGame').textContent = t('startGame');
+    
+    const diffOpts = document.querySelectorAll('#difficulty option');
+    diffOpts.forEach(opt => { opt.textContent = opt.dataset[currentLang]; });
+    const colorOpts = document.querySelectorAll('#playerColor option');
+    colorOpts.forEach(opt => { opt.textContent = opt.dataset[currentLang]; });
     
     updateGameInfo('');
 }

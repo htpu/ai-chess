@@ -75,8 +75,10 @@ class ChessGame {
     }
 
     init() {
-        currentLang = document.getElementById('language').value;
-        soundEnabled = document.getElementById('soundToggle').checked;
+        currentLang = localStorage.getItem('language') || 'zh';
+        
+        const soundToggle = document.getElementById('soundToggle');
+        soundEnabled = soundToggle ? soundToggle.checked : true;
         
         const savedGameState = localStorage.getItem('chessGameState');
         let hasSavedGame = false;
@@ -144,7 +146,6 @@ class ChessGame {
         
         const savedColor = localStorage.getItem('playerColor');
         if (savedColor) {
-            document.getElementById('playerColor').value = savedColor;
             this.playerColor = savedColor;
         }
         
@@ -152,63 +153,82 @@ class ChessGame {
         if (currentOrientation !== this.playerColor) {
             this.board.flip();
         }
-        
-        if (!hasSavedGame && this.playerColor === 'black') {
-            if (this.stockfishReady) {
-                this.makeAIMove();
-            } else {
-                this.pendingAIMove = true;
-            }
-        }
     }
 
     bindEvents() {
-        document.getElementById('difficulty').addEventListener('change', () => {
-            this.showStatus(`${this.t('difficultyChanged')} ${document.getElementById('difficulty').value} ${this.t('level')}`);
-            this.saveGameState();
-        });
+        const difficultyEl = document.getElementById('difficulty');
+        if (difficultyEl) {
+            difficultyEl.addEventListener('change', () => {
+                this.showStatus(`${this.t('difficultyChanged')} ${document.getElementById('difficulty').value} ${this.t('level')}`);
+                this.saveGameState();
+            });
+        }
 
-        document.getElementById('playerColor').addEventListener('change', (e) => {
-            this.playerColor = e.target.value;
-            localStorage.setItem('playerColor', this.playerColor);
-            this.resetGame();
-        });
+        const playerColorEl = document.getElementById('playerColor');
+        if (playerColorEl) {
+            playerColorEl.addEventListener('change', (e) => {
+                this.playerColor = e.target.value;
+                localStorage.setItem('playerColor', this.playerColor);
+                this.resetGame();
+            });
+        }
 
-        document.getElementById('soundToggle').addEventListener('change', (e) => {
-            soundEnabled = e.target.checked;
-            localStorage.setItem('soundEnabled', soundEnabled);
-            if (soundEnabled) {
-                this.playSound('move');
-            }
-        });
+        const soundToggleEl = document.getElementById('soundToggle');
+        if (soundToggleEl) {
+            soundToggleEl.addEventListener('change', (e) => {
+                soundEnabled = e.target.checked;
+                localStorage.setItem('soundEnabled', soundEnabled);
+                if (soundEnabled) {
+                    this.playSound('move');
+                }
+            });
+        }
 
-        document.getElementById('flipBoard').addEventListener('click', () => {
-            this.board.flip();
-            this.playerColor = this.board.orientation();
-            document.getElementById('playerColor').value = this.playerColor;
-            localStorage.setItem('playerColor', this.playerColor);
-        });
+        const flipBoardEl = document.getElementById('flipBoard');
+        if (flipBoardEl) {
+            flipBoardEl.addEventListener('click', () => {
+                this.board.flip();
+                this.playerColor = this.board.orientation();
+                document.getElementById('playerColor').value = this.playerColor;
+                localStorage.setItem('playerColor', this.playerColor);
+            });
+        }
 
-        document.getElementById('undoMove').addEventListener('click', () => {
-            this.undoMove();
-        });
+        const undoMoveEl = document.getElementById('undoMove');
+        if (undoMoveEl) {
+            undoMoveEl.addEventListener('click', () => {
+                this.undoMove();
+            });
+        }
 
-        document.getElementById('resign').addEventListener('click', () => {
-            this.resign();
-        });
+        const resignEl = document.getElementById('resign');
+        if (resignEl) {
+            resignEl.addEventListener('click', () => {
+                this.resign();
+            });
+        }
 
-        document.getElementById('newGame').addEventListener('click', () => {
-            this.resetGame();
-        });
+        const newGameEl = document.getElementById('newGame');
+        if (newGameEl) {
+            newGameEl.addEventListener('click', () => {
+                this.resetGame();
+            });
+        }
 
-        document.getElementById('playAgain').addEventListener('click', () => {
-            document.getElementById('gameOverModal').classList.add('hidden');
-            this.resetGame();
-        });
+        const playAgainEl = document.getElementById('playAgain');
+        if (playAgainEl) {
+            playAgainEl.addEventListener('click', () => {
+                document.getElementById('gameOverModal').classList.add('hidden');
+                this.resetGame();
+            });
+        }
 
-        document.getElementById('board').addEventListener('mousedown', (e) => {
-            this.handleBoardClick(e);
-        });
+        const boardEl = document.getElementById('board');
+        if (boardEl) {
+            boardEl.addEventListener('mousedown', (e) => {
+                this.handleBoardClick(e);
+            });
+        }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'z' || e.key === 'Z') {
@@ -630,7 +650,7 @@ class ChessGame {
         turnIndicator.style.padding = '2px 8px';
         turnIndicator.style.borderRadius = '3px';
 
-        const fullMoves = Math.floor(this.game.history().length / 2) + 1;
+        const fullMoves = Math.ceil(this.game.history().length / 2);
         document.getElementById('moveCount').textContent = fullMoves;
 
         if (this.game.in_check()) {
@@ -796,8 +816,19 @@ class ChessGame {
         this.updateUI();
         this.saveGameState();
     }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.chessGame = new ChessGame();
-});
+    newGame() {
+        const playerColorSelect = document.getElementById('playerColor');
+        if (playerColorSelect) {
+            this.playerColor = playerColorSelect.value;
+            localStorage.setItem('playerColor', this.playerColor);
+        }
+        
+        this.resetGame();
+    }
+
+    createBoard() {
+        // Board is already initialized in constructor/init
+        // This method is here for API compatibility with loaders
+    }
+}
