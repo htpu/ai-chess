@@ -216,11 +216,11 @@ main {
 }
 
 #board .white-1e1d7 {
-    background: #1a1a2e !important;
+    background: #e8dcb5 !important;
 }
 
 #board .black-3c85d {
-    background: #0d0d1a !important;
+    background: #e8dcb5 !important;
 }
 
 #board img {
@@ -229,7 +229,6 @@ main {
 
 #board .piece-417db {
     box-shadow: none;
-    border-radius: 0;
 }
 
 .highlight {
