@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Chess - Play Chinese Chess (Xiangqi) against AI with multiple difficulty levels">
+    <title>AI Chess - Chinese Chess</title>
+    <meta name="version" content="v1.10.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>象棋</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/xiangqi.css">
+</head>
+<body>
+    <div class="container">
+        <header class="toolbar" role="banner">
+            <div class="toolbar-left">
+                <button id="backToHome" class="icon-btn" aria-label="返回首页">🏠</button>
+                <h1 id="gameTitle">象棋</h1>
+            </div>
+            <div class="toolbar-center">
+                <div class="game-info-bar" role="status" aria-live="polite">
+                    <span id="gameInfo">-</span>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <button id="newGame" class="btn primary" aria-label="新游戏"></button>
+            </div>
+        </header>
+
+        <main role="main">
+            <section class="board-section" aria-label="棋盘">
+                <div id="board" class="xiangqi-board" role="application" aria-label="中国象棋棋盘"></div>
+                <div id="thinking" class="thinking hidden" role="status" aria-live="assertive"></div>
+            </section>
+
+            <aside class="side-panel" role="complementary" aria-label="游戏信息">
+                <div class="control-panel">
+                    <div class="board-controls" role="group" aria-label="游戏控制">
+                        <button id="undoMove" class="btn" aria-label="撤销上一步"></button>
+                        <button id="resign" class="btn" aria-label="认输"></button>
+                    </div>
+                    <h3 id="controlTitle"></h3>
+                    <div class="game-info">
+                        <div class="info-row">
+                            <span id="turnLabel"></span>
+                            <span id="turnIndicator" role="status" aria-live="polite"></span>
+                        </div>
+                        <div class="info-row">
+                            <span id="movesLabel"></span>
+                            <span id="moveCount">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="history-panel">
+                    <h3 id="historyTitle"></h3>
+                    <div id="moveHistory" role="log" aria-live="polite"></div>
+                    <div class="status" role="status">
+                        <span id="status"></span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div id="newGameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="newGameTitle">
+        <div class="modal-content">
+            <h2 id="newGameTitle"></h2>
+            <div class="modal-options">
+                <div class="option-group">
+                    <label id="difficultyLabel" for="difficulty"></label>
+                    <select id="difficulty" aria-label="选择难度">
+                        <option value="1" data-zh="等级 1" data-en="Lvl 1">等级 1</option>
+                        <option value="2" data-zh="等级 2" data-en="Lvl 2">等级 2</option>
+                        <option value="3" selected data-zh="等级 3" data-en="Lvl 3">等级 3</option>
+                        <option value="4" data-zh="等级 4" data-en="Lvl 4">等级 4</option>
+                        <option value="5" data-zh="等级 5" data-en="Lvl 5">等级 5</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label id="playerColorLabel" for="playerColor"></label>
+                    <select id="playerColor" aria-label="选择执子颜色">
+                        <option value="red" selected data-zh="红方" data-en="Red">红方</option>
+                        <option value="black" data-zh="黑方" data-en="Black">黑方</option>
+                    </select>
+                </div>
+            </div>
+            <button id="startGame" class="btn primary"></button>
+        </div>
+    </div>
+
+    <div id="gameOverModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+        <div class="modal-content">
+            <h2 id="gameOverTitle"></h2>
+            <p id="gameOverMessage"></p>
+            <button id="playAgain" class="btn primary"></button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <script src="js/games/xiangqi.js"></script>
+    <script src="js/xiangqi-loader.js"></script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "746339ecce1c48f29195a33cd061b157"}'></script>
+</body>
+</html>

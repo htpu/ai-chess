@@ -19,6 +19,13 @@ const GAMES = {
         icon: '⊞',
         description: { zh: '逻辑推理挑战', en: 'Logic Challenge' },
         color: '#00F2FF'
+    },
+    xiangqi: {
+        id: 'xiangqi',
+        name: { zh: '中国象棋', en: 'Xiangqi' },
+        icon: '象棋',
+        description: { zh: '传统中国象棋', en: 'Traditional Chinese Chess' },
+        color: '#CD853F'
     }
 };
 
@@ -97,7 +104,8 @@ function startGame(gameId) {
     const gamePages = {
         chess: 'chess.html',
         sudoku: 'sudoku.html',
-        gomoku: 'gomoku.html'
+        gomoku: 'gomoku.html',
+        xiangqi: 'xiangqi.html'
     };
     
     window.location.href = gamePages[gameId] || 'chess.html';
