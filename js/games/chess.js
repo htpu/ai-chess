@@ -218,13 +218,6 @@ class ChessGame {
             });
         }
 
-        const newGameEl = document.getElementById('newGame');
-        if (newGameEl) {
-            newGameEl.addEventListener('click', () => {
-                this.resetGame();
-            });
-        }
-
         const playAgainEl = document.getElementById('playAgain');
         if (playAgainEl) {
             playAgainEl.addEventListener('click', () => {
