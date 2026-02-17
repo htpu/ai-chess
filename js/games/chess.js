@@ -812,7 +812,7 @@ class ChessGame {
         this.isThinking = false;
         document.getElementById('thinking').classList.add('hidden');
         
-        if (this.playerColor === 'black') {
+        if (this.gameStarted && this.playerColor === 'black') {
             if (this.stockfishReady) {
                 this.makeAIMove();
             } else {
