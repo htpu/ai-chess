@@ -221,6 +221,10 @@ class GomokuGame {
 
     aiMove() {
         if (this.gameOver) return;
+        if (this.currentPlayer !== 'white') {
+            console.error('AI move called but it is not AI turn:', this.currentPlayer);
+            return;
+        }
         
         let index;
         
