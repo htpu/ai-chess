@@ -142,40 +142,35 @@ class XiangqiGame {
         boardEl.innerHTML = '';
         boardEl.className = 'xiangqi-board';
 
-        const gridContainer = document.createElement('div');
-        gridContainer.className = 'xq-grid';
-        
         for (let i = 0; i < 10; i++) {
             const hLine = document.createElement('div');
             hLine.className = 'xq-h-line';
-            hLine.style.top = `${(i + 1) * 10}%`;
-            hLine.style.left = '0';
-            hLine.style.right = '0';
-            gridContainer.appendChild(hLine);
+            hLine.style.top = `${3 + i * 9.4}%`;
+            boardEl.appendChild(hLine);
         }
         
         for (let i = 0; i < 9; i++) {
             const vLine = document.createElement('div');
             vLine.className = 'xq-v-line';
-            vLine.style.left = `${(i + 1) * 11.11}%`;
-            vLine.style.top = '0';
-            vLine.style.bottom = '0';
-            gridContainer.appendChild(vLine);
+            vLine.style.left = `${3 + i * 10.75}%`;
+            boardEl.appendChild(vLine);
         }
 
-        const palaceBox1 = document.createElement('div');
-        palaceBox1.className = 'xq-palace-box xq-palace-black';
-        palaceBox1.style.right = '0';
-        palaceBox1.style.top = '30%';
-        gridContainer.appendChild(palaceBox1);
+        const palaceTL = document.createElement('div');
+        palaceTL.className = 'xq-palace xq-palace-tl';
+        boardEl.appendChild(palaceTL);
 
-        const palaceBox2 = document.createElement('div');
-        palaceBox2.className = 'xq-palace-box xq-palace-red';
-        palaceBox2.style.right = '0';
-        palaceBox2.style.bottom = '30%';
-        gridContainer.appendChild(palaceBox2);
+        const palaceTR = document.createElement('div');
+        palaceTR.className = 'xq-palace xq-palace-tr';
+        boardEl.appendChild(palaceTR);
 
-        boardEl.appendChild(gridContainer);
+        const palaceBL = document.createElement('div');
+        palaceBL.className = 'xq-palace xq-palace-bl';
+        boardEl.appendChild(palaceBL);
+
+        const palaceBR = document.createElement('div');
+        palaceBR.className = 'xq-palace xq-palace-br';
+        boardEl.appendChild(palaceBR);
 
         for (let row = 0; row < 10; row++) {
             for (let col = 0; col < 9; col++) {
@@ -184,8 +179,8 @@ class XiangqiGame {
                 cell.dataset.row = row;
                 cell.dataset.col = col;
 
-                cell.style.left = `${col * 11.11}%`;
-                cell.style.top = `${row * 10}%`;
+                cell.style.left = `${col * 10.75 + 3}%`;
+                cell.style.top = `${row * 9.4 + 3}%`;
 
                 const piece = this.board[row][col];
                 if (piece) {
