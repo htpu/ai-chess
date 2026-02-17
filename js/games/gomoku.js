@@ -855,9 +855,12 @@ class GomokuGame {
             undoCount--;
         }
         
-        this.currentPlayer = this.undoStack.length > 0 
-            ? this.undoStack[this.undoStack.length - 1].player 
-            : 'black';
+        if (this.undoStack.length > 0) {
+            const lastAction = this.undoStack[this.undoStack.length - 1];
+            this.currentPlayer = lastAction.player === 'black' ? 'white' : 'black';
+        } else {
+            this.currentPlayer = 'black';
+        }
         
         this.updatePlayerIndicator();
         
@@ -865,8 +868,6 @@ class GomokuGame {
         if (lastStone) {
             lastStone.classList.add('last-move');
         }
-        
-        this.gameOver = false;
     }
 
     resign() {
