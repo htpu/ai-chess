@@ -9,32 +9,18 @@
 </head>
 <body>
     <div class="gomoku-container">
-        <header>
-            <button id="backToHome" class="icon-btn">🏠</button>
-            <h1 id="gameTitle">● Gomoku ●</h1>
-            <select id="language">
-                <option value="zh">中文</option>
-                <option value="en">EN</option>
-            </select>
-        </header>
-
-        <main>
-            <div class="game-info">
-                <div class="player-info">
+        <header class="toolbar">
+            <div class="toolbar-left">
+                <button id="backToHome" class="icon-btn">🏠</button>
+                <h1 id="gameTitle">● Gomoku ●</h1>
+            </div>
+            <div class="toolbar-center">
+                <div class="player-indicator">
                     <span id="currentPlayer">●</span>
                     <span id="playerLabel"></span>
                 </div>
             </div>
-
-            <div class="gomoku-board" id="board"></div>
-
-            <div class="controls">
-                <button id="newGame" class="btn primary"></button>
-                <button id="undo" class="btn"></button>
-                <button id="resign" class="btn"></button>
-            </div>
-
-            <div class="settings">
+            <div class="toolbar-right">
                 <label>
                     <span id="modeLabel"></span>
                     <select id="gameMode">
@@ -50,6 +36,20 @@
                         <option value="3"></option>
                     </select>
                 </label>
+                <select id="language">
+                    <option value="zh">中文</option>
+                    <option value="en">EN</option>
+                </select>
+            </div>
+        </header>
+
+        <main>
+            <div class="gomoku-board" id="board"></div>
+
+            <div class="controls">
+                <button id="newGame" class="btn primary"></button>
+                <button id="undo" class="btn"></button>
+                <button id="resign" class="btn"></button>
             </div>
         </main>
 

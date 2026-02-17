@@ -5,6 +5,7 @@
     --grid-line-thick: #374151;
     --accent-cyan: #00F2FF;
     --accent-green: #39FF14;
+    --accent-orange: #FF6B35;
     --error: #FF3131;
     --text-primary: #F9FAFB;
     --text-secondary: #9CA3AF;
@@ -28,37 +29,56 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 20px;
 }
 
 .sudoku-container {
     width: 100%;
     max-width: 500px;
-    padding: 20px;
 }
 
-header {
+.toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    padding: 12px 15px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--grid-line);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-header h1 {
-    font-size: 1.5rem;
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toolbar h1 {
+    font-size: 1.3rem;
     color: var(--accent-cyan);
     text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-    letter-spacing: 4px;
+    letter-spacing: 2px;
 }
 
 .icon-btn {
     background: transparent;
     border: 1px solid var(--grid-line);
     color: var(--text-secondary);
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     font-size: 1.2rem;
     cursor: pointer;
+    border-radius: 5px;
     transition: all 0.2s;
 }
 
@@ -67,12 +87,37 @@ header h1 {
     color: var(--accent-cyan);
 }
 
-header select {
-    background: var(--bg-secondary);
+.toolbar label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.toolbar select,
+.toolbar-right select {
+    padding: 6px 10px;
+    background: var(--bg-primary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
-    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
     font-family: inherit;
+    font-size: 0.8rem;
+}
+
+.toolbar select:focus,
+.toolbar-right select:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .sudoku-board {
@@ -81,7 +126,7 @@ header select {
     gap: 0;
     background: var(--grid-line);
     border: 2px solid var(--grid-line-thick);
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .cell {
@@ -90,7 +135,7 @@ header select {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     cursor: pointer;
     position: relative;
@@ -153,7 +198,7 @@ header select {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .num-btn {
@@ -161,10 +206,11 @@ header select {
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-family: inherit;
     cursor: pointer;
     transition: all 0.15s;
+    border-radius: 5px;
 }
 
 .num-btn:hover {
@@ -181,23 +227,26 @@ header select {
 }
 
 .controls {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
 }
 
 .btn {
-    padding: 12px 20px;
+    padding: 10px 18px;
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    border-radius: 6px;
+    flex: 1;
+    min-width: 80px;
 }
 
 .btn:hover {
@@ -209,7 +258,6 @@ header select {
     background: var(--accent-cyan);
     color: var(--bg-primary);
     border-color: var(--accent-cyan);
-    font-weight: bold;
 }
 
 .btn.primary:hover {
@@ -217,36 +265,19 @@ header select {
     color: var(--accent-cyan);
 }
 
-.settings {
-    display: flex;
-    justify-content: center;
-}
-
-.settings label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--text-secondary);
-}
-
-.settings select {
-    background: var(--bg-secondary);
-    border: 1px solid var(--grid-line);
-    color: var(--text-primary);
-    padding: 6px 12px;
-    font-family: inherit;
-}
-
 .message {
     position: fixed;
-    bottom: 20%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent-green);
-    color: var(--bg-primary);
-    padding: 12px 24px;
-    font-weight: bold;
-    animation: fadeInOut 1.5s forwards;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent-green);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    color: var(--accent-green);
+    z-index: 100;
+    animation: messageIn 0.3s ease;
 }
 
 .message.hidden {
@@ -254,12 +285,39 @@ header select {
 }
 
 .message.error {
-    background: var(--error);
+    border-color: var(--error);
+    color: var(--error);
 }
 
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    85% { opacity: 1; }
-    100% { opacity: 0; }
+@keyframes messageIn {
+    from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 500px) {
+    .toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .toolbar-left,
+    .toolbar-right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .cell {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+    }
 }

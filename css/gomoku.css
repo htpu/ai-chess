@@ -27,37 +27,62 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 20px;
 }
 
 .gomoku-container {
     width: 100%;
-    max-width: 500px;
-    padding: 20px;
+    max-width: 600px;
 }
 
-header {
+.toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    padding: 12px 15px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--grid-line);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-header h1 {
-    font-size: 1.5rem;
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar-center {
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.toolbar h1 {
+    font-size: 1.3rem;
     color: var(--accent-orange);
     text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
-    letter-spacing: 4px;
+    letter-spacing: 2px;
 }
 
 .icon-btn {
     background: transparent;
     border: 1px solid var(--grid-line);
     color: var(--text-secondary);
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     font-size: 1.2rem;
     cursor: pointer;
+    border-radius: 5px;
     transition: all 0.2s;
 }
 
@@ -66,50 +91,56 @@ header h1 {
     color: var(--accent-orange);
 }
 
-header select {
-    background: var(--bg-secondary);
-    border: 1px solid var(--grid-line);
-    color: var(--text-primary);
-    padding: 8px 12px;
-    font-family: inherit;
-}
-
-.game-info {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.player-info {
+.player-indicator {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 20px;
-    background: var(--bg-secondary);
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--bg-primary);
     border: 1px solid var(--grid-line);
+    border-radius: 20px;
 }
 
-.player-info .icon {
-    font-size: 1.5rem;
+.player-indicator #currentPlayer {
+    font-size: 1.3rem;
 }
 
-.player-info.black .icon {
-    color: var(--accent-black);
-    text-shadow: 0 0 5px #fff;
+.player-indicator #playerLabel {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 
-.player-info.white .icon {
-    color: var(--accent-white);
-    text-shadow: 0 0 5px #000;
+.toolbar label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }
 
-.player-info.current {
+.toolbar select,
+.toolbar-right select {
+    padding: 6px 10px;
+    background: var(--bg-primary);
+    border: 1px solid var(--grid-line);
+    color: var(--text-primary);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8rem;
+}
+
+.toolbar select:focus,
+.toolbar-right select:focus {
+    outline: none;
     border-color: var(--accent-orange);
-    box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
 }
 
-#currentPlayer {
-    font-size: 1.5rem;
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .gomoku-board {
@@ -119,7 +150,7 @@ header select {
     background: var(--bg-secondary);
     border: 2px solid var(--grid-line-thick);
     padding: 10px;
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .cell {
@@ -185,40 +216,28 @@ header select {
 }
 
 @keyframes glow {
-    0% { box-shadow: 0 0 10px var(--accent-gold); }
-    100% { box-shadow: 0 0 20px var(--accent-gold), 0 0 40px var(--accent-gold); }
-}
-
-.cell:hover:not(.occupied) {
-    background: rgba(255, 107, 53, 0.1);
-}
-
-.cell.occupied {
-    cursor: default;
-}
-
-.cell.win {
-    background: rgba(255, 215, 0, 0.2);
+    from { box-shadow: 0 0 10px var(--accent-gold); }
+    to { box-shadow: 0 0 20px var(--accent-gold), 0 0 30px var(--accent-gold); }
 }
 
 .controls {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .btn {
-    padding: 12px 20px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: bold;
+    color: var(--text-primary);
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 0.9rem;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    transition: all 0.2s ease;
 }
 
 .btn:hover {
@@ -228,65 +247,74 @@ header select {
 
 .btn.primary {
     background: var(--accent-orange);
-    color: var(--bg-primary);
+    color: #000;
     border-color: var(--accent-orange);
-    font-weight: bold;
+    padding: 10px 24px;
 }
 
 .btn.primary:hover {
-    background: transparent;
-    color: var(--accent-orange);
-}
-
-.settings {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.settings label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.settings select {
-    background: var(--bg-secondary);
-    border: 1px solid var(--grid-line);
-    color: var(--text-primary);
-    padding: 6px 12px;
-    font-family: inherit;
+    background: #ff8555;
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
 }
 
 .message {
     position: fixed;
-    bottom: 20%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent-orange);
-    color: var(--bg-primary);
-    padding: 12px 24px;
-    font-weight: bold;
-    animation: fadeInOut 1.5s forwards;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent-gold);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    color: var(--accent-gold);
+    z-index: 100;
+    animation: messageIn 0.3s ease;
+}
+
+.message.error {
+    border-color: var(--error);
+    color: var(--error);
 }
 
 .message.hidden {
     display: none;
 }
 
-.message.win {
-    background: var(--accent-gold);
+@keyframes messageIn {
+    from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
-.message.error {
-    background: var(--error);
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    85% { opacity: 1; }
-    100% { opacity: 0; }
+@media (max-width: 600px) {
+    .toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .toolbar-left,
+    .toolbar-center,
+    .toolbar-right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .gomoku-board {
+        padding: 5px;
+    }
+    
+    .controls {
+        width: 100%;
+    }
+    
+    .btn {
+        flex: 1;
+        min-width: 80px;
+    }
 }

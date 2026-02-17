@@ -9,13 +9,26 @@
 </head>
 <body>
     <div class="sudoku-container">
-        <header>
-            <button id="backToHome" class="icon-btn">🏠</button>
-            <h1 id="gameTitle">⊞ Sudoku ⊞</h1>
-            <select id="language">
-                <option value="zh">中文</option>
-                <option value="en">EN</option>
-            </select>
+        <header class="toolbar">
+            <div class="toolbar-left">
+                <button id="backToHome" class="icon-btn">🏠</button>
+                <h1 id="gameTitle">⊞ Sudoku ⊞</h1>
+            </div>
+            <div class="toolbar-right">
+                <label>
+                    <span id="difficultyLabel"></span>
+                    <select id="difficulty">
+                        <option value="easy"></option>
+                        <option value="medium" selected></option>
+                        <option value="hard"></option>
+                        <option value="expert"></option>
+                    </select>
+                </label>
+                <select id="language">
+                    <option value="zh">中文</option>
+                    <option value="en">EN</option>
+                </select>
+            </div>
         </header>
 
         <main>
@@ -39,18 +52,6 @@
                 <button id="solve" class="btn"></button>
                 <button id="erase" class="btn"></button>
                 <button id="undo" class="btn"></button>
-            </div>
-
-            <div class="settings">
-                <label>
-                    <span id="difficultyLabel"></span>
-                    <select id="difficulty">
-                        <option value="easy"></option>
-                        <option value="medium" selected></option>
-                        <option value="hard"></option>
-                        <option value="expert"></option>
-                    </select>
-                </label>
             </div>
         </main>
 
