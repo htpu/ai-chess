@@ -29,42 +29,42 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
+    padding: 15px;
 }
 
-.sudoku-container {
+.container {
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
 }
 
 .toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 10px 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
     border-radius: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 }
 
 .toolbar-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .toolbar-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .toolbar h1 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--accent-cyan);
     text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
     letter-spacing: 2px;
@@ -74,12 +74,15 @@ body {
     background: transparent;
     border: 1px solid var(--grid-line);
     color: var(--text-secondary);
-    width: 36px;
-    height: 36px;
-    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
     cursor: pointer;
     border-radius: 5px;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-btn:hover {
@@ -90,21 +93,21 @@ body {
 .toolbar label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
+    gap: 4px;
+    font-size: 0.75rem;
     color: var(--text-secondary);
 }
 
 .toolbar select,
 .toolbar-right select {
-    padding: 6px 10px;
+    padding: 5px 8px;
     background: var(--bg-primary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
     border-radius: 5px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
 .toolbar select:focus,
@@ -113,11 +116,11 @@ body {
     border-color: var(--accent-cyan);
 }
 
-main {
+.game-main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .sudoku-board {
@@ -135,7 +138,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
     position: relative;
@@ -197,7 +200,7 @@ main {
 .numpad {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+    gap: 6px;
     width: 100%;
 }
 
@@ -206,7 +209,7 @@ main {
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-family: inherit;
     cursor: pointer;
     transition: all 0.15s;
@@ -228,25 +231,24 @@ main {
 
 .controls {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
 }
 
 .btn {
-    padding: 10px 18px;
+    padding: 8px 16px;
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 6px;
     flex: 1;
-    min-width: 80px;
 }
 
 .btn:hover {
@@ -260,6 +262,11 @@ main {
     border-color: var(--accent-cyan);
 }
 
+.btn.primary.small {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+}
+
 .btn.primary:hover {
     background: transparent;
     color: var(--accent-cyan);
@@ -270,11 +277,11 @@ main {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 15px 30px;
+    padding: 12px 24px;
     background: var(--bg-secondary);
     border: 2px solid var(--accent-green);
     border-radius: 10px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--accent-green);
     z-index: 100;
     animation: messageIn 0.3s ease;
@@ -303,7 +310,7 @@ main {
 @media (max-width: 500px) {
     .toolbar {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
     
     .toolbar-left,
@@ -317,7 +324,7 @@ main {
     }
     
     .btn {
-        padding: 8px 12px;
+        padding: 6px 12px;
         font-size: 0.75rem;
     }
 }

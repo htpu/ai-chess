@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Game</title>
+    <title>AI Chess</title>
     <meta name="version" content="v1.0.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1 id="gameTitle">♔ AI Chess ♚</h1>
-            <div class="header-controls">
+        <header class="toolbar">
+            <div class="toolbar-left">
+                <button id="backToHome" class="icon-btn">🏠</button>
+                <h1 id="gameTitle">♔ Chess ♚</h1>
+            </div>
+            <div class="toolbar-center">
                 <div class="control-group" id="difficultyGroup">
                     <label id="difficultyLabel"></label>
                     <select id="difficulty">
-                        <option value="1" data-zh="等级 1 (入门 1000 ELO)" data-en="Level 1 (Beginner 1000)">等级 1 (入门 1000 ELO)</option>
-                        <option value="2" data-zh="等级 2 (初级 1250 ELO)" data-en="Level 2 (Intermediate 1250)">等级 2 (初级 1250 ELO)</option>
-                        <option value="3" selected data-zh="等级 3 (中级 1500 ELO)" data-en="Level 3 (Advanced 1500)">等级 3 (中级 1500 ELO)</option>
-                        <option value="4" data-zh="等级 4 (高级 1750 ELO)" data-en="Level 4 (Expert 1750)">等级 4 (高级 1750 ELO)</option>
-                        <option value="5" data-zh="等级 5 (大师 2000 ELO)" data-en="Level 5 (Master 2000)">等级 5 (大师 2000 ELO)</option>
+                        <option value="1" data-zh="等级 1" data-en="Lvl 1">等级 1</option>
+                        <option value="2" data-zh="等级 2" data-en="Lvl 2">等级 2</option>
+                        <option value="3" selected data-zh="等级 3" data-en="Lvl 3">等级 3</option>
+                        <option value="4" data-zh="等级 4" data-en="Lvl 4">等级 4</option>
+                        <option value="5" data-zh="等级 5" data-en="Lvl 5">等级 5</option>
                     </select>
                 </div>
                 <div class="control-group" id="playerColorGroup">
@@ -30,18 +33,16 @@
                         <option value="black" data-zh="黑方" data-en="Black">黑方</option>
                     </select>
                 </div>
-                <div class="control-group sound-group">
-                    <label>🔊</label>
-                    <input type="checkbox" id="soundToggle">
-                </div>
             </div>
-            <div class="header-corner">
+            <div class="toolbar-right">
+                <label>
+                    <input type="checkbox" id="soundToggle">
+                    <span>🔊</span>
+                </label>
                 <select id="language">
                     <option value="zh">中文</option>
                     <option value="en">EN</option>
                 </select>
-                <button id="backToHome" class="btn-small">🏠</button>
-                <div class="version">v1.5.1</div>
             </div>
         </header>
 
@@ -57,15 +58,16 @@
             <section class="board-section">
                 <div id="board"></div>
                 <div id="thinking" class="thinking hidden"></div>
+                <div class="game-controls">
+                    <button id="newGame" class="btn primary"></button>
+                    <button id="undoMove" class="btn"></button>
+                    <button id="resign" class="btn"></button>
+                    <button id="flipBoard" class="btn"></button>
+                </div>
             </section>
 
             <aside class="control-panel">
                 <h3 id="controlTitle"></h3>
-                <button id="flipBoard" class="btn"></button>
-                <button id="undoMove" class="btn"></button>
-                <button id="resign" class="btn"></button>
-                <button id="newGame" class="btn primary"></button>
-                
                 <div class="game-info">
                     <div class="info-row">
                         <span id="turnLabel"></span>
@@ -84,7 +86,7 @@
         <div class="modal-content">
             <h2 id="gameOverTitle"></h2>
             <p id="gameOverMessage"></p>
-            <button id="playAgain" class="btn primary">再来一局</button>
+            <button id="playAgain" class="btn primary"></button>
         </div>
     </div>
 

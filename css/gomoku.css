@@ -11,7 +11,6 @@
     --error: #FF3131;
     --text-primary: #F9FAFB;
     --text-secondary: #9CA3AF;
-    --cell-size: 40px;
 }
 
 * {
@@ -27,32 +26,31 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
+    padding: 15px;
 }
 
-.gomoku-container {
+.container {
     width: 100%;
-    max-width: 600px;
+    max-width: 550px;
 }
 
 .toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 10px 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--grid-line);
     border-radius: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 }
 
 .toolbar-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .toolbar-center {
@@ -63,12 +61,12 @@ body {
 .toolbar-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .toolbar h1 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--accent-orange);
     text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
     letter-spacing: 2px;
@@ -78,12 +76,15 @@ body {
     background: transparent;
     border: 1px solid var(--grid-line);
     color: var(--text-secondary);
-    width: 36px;
-    height: 36px;
-    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
     cursor: pointer;
     border-radius: 5px;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-btn:hover {
@@ -94,40 +95,40 @@ body {
 .player-indicator {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
+    gap: 6px;
+    padding: 5px 12px;
     background: var(--bg-primary);
     border: 1px solid var(--grid-line);
-    border-radius: 20px;
+    border-radius: 15px;
 }
 
 .player-indicator #currentPlayer {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 .player-indicator #playerLabel {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
 .toolbar label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
+    gap: 4px;
+    font-size: 0.75rem;
     color: var(--text-secondary);
 }
 
 .toolbar select,
 .toolbar-right select {
-    padding: 6px 10px;
+    padding: 5px 8px;
     background: var(--bg-primary);
     border: 1px solid var(--grid-line);
     color: var(--text-primary);
     border-radius: 5px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
 .toolbar select:focus,
@@ -136,11 +137,11 @@ body {
     border-color: var(--accent-orange);
 }
 
-main {
+.game-main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .gomoku-board {
@@ -149,7 +150,7 @@ main {
     gap: 0;
     background: var(--bg-secondary);
     border: 2px solid var(--grid-line-thick);
-    padding: 10px;
+    padding: 8px;
     width: 100%;
 }
 
@@ -175,8 +176,8 @@ main {
 .cell::before {
     content: '';
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--grid-line);
 }
@@ -222,14 +223,14 @@ main {
 
 .controls {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
 .btn {
-    padding: 10px 20px;
-    font-size: 0.85rem;
+    padding: 8px 16px;
+    font-size: 0.8rem;
     font-family: inherit;
     font-weight: bold;
     color: var(--text-primary);
@@ -249,7 +250,12 @@ main {
     background: var(--accent-orange);
     color: #000;
     border-color: var(--accent-orange);
-    padding: 10px 24px;
+    padding: 6px 14px;
+}
+
+.btn.primary.small {
+    padding: 5px 12px;
+    font-size: 0.75rem;
 }
 
 .btn.primary:hover {
@@ -262,11 +268,11 @@ main {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 15px 30px;
+    padding: 12px 24px;
     background: var(--bg-secondary);
     border: 2px solid var(--accent-gold);
     border-radius: 10px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--accent-gold);
     z-index: 100;
     animation: messageIn 0.3s ease;
@@ -292,10 +298,10 @@ main {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     .toolbar {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
     
     .toolbar-left,
@@ -306,15 +312,11 @@ main {
     }
     
     .gomoku-board {
-        padding: 5px;
-    }
-    
-    .controls {
-        width: 100%;
+        padding: 4px;
     }
     
     .btn {
-        flex: 1;
-        min-width: 80px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
     }
 }

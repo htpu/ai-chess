@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/gomoku.css">
 </head>
 <body>
-    <div class="gomoku-container">
+    <div class="container">
         <header class="toolbar">
             <div class="toolbar-left">
                 <button id="backToHome" class="icon-btn">🏠</button>
@@ -36,6 +36,7 @@
                         <option value="3"></option>
                     </select>
                 </label>
+                <button id="newGame" class="btn primary small"></button>
                 <select id="language">
                     <option value="zh">中文</option>
                     <option value="en">EN</option>
@@ -43,11 +44,10 @@
             </div>
         </header>
 
-        <main>
+        <main class="game-main">
             <div class="gomoku-board" id="board"></div>
 
             <div class="controls">
-                <button id="newGame" class="btn primary"></button>
                 <button id="undo" class="btn"></button>
                 <button id="resign" class="btn"></button>
             </div>
