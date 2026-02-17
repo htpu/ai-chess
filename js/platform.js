@@ -95,12 +95,12 @@ function startGame(gameId) {
     localStorage.setItem('selectedGame', gameId);
     
     const gamePages = {
-        chess: 'game.html',
+        chess: 'chess.html',
         sudoku: 'sudoku.html',
         gomoku: 'gomoku.html'
     };
     
-    window.location.href = gamePages[gameId] || 'game.html';
+    window.location.href = gamePages[gameId] || 'chess.html';
 }
 
 function loadGameSettings() {

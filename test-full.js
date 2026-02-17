@@ -439,7 +439,7 @@ async function runTests() {
     
     try {
         console.log('📋 访问页面...\n');
-        await page.goto(`http://localhost:${PORT}/game.html`, { waitUntil: 'networkidle', timeout: 20000 });
+        await page.goto(`http://localhost:${PORT}/chess.html`, { waitUntil: 'networkidle', timeout: 20000 });
         await page.waitForTimeout(2000);
         
         for (const testCase of testCases) {
