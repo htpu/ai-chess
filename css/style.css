@@ -104,22 +104,15 @@ body {
 
 main {
     display: grid;
-    grid-template-columns: 180px 1fr 100px;
+    grid-template-columns: 1fr 200px;
     gap: 12px;
     align-items: start;
 }
 
-.left-panel {
+.side-panel {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.right-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 50px;
 }
 
 .control-panel,
@@ -216,17 +209,18 @@ main {
 #board {
     width: 100%;
     max-width: 420px;
+    aspect-ratio: 1;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 0 2px var(--grid-line);
 }
 
 #board .white-1e1d7 {
-    background: #1a1a2e;
+    background: #1a1a2e !important;
 }
 
 #board .black-3c85d {
-    background: #0d0d1a;
+    background: #0d0d1a !important;
 }
 
 #board img {
@@ -266,6 +260,13 @@ main {
     background: rgba(255, 107, 53, 0.4) !important;
 }
 
+.board-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .thinking {
     padding: 10px 20px;
     background: var(--bg-secondary);
@@ -278,27 +279,6 @@ main {
 
 .thinking.hidden {
     display: none;
-}
-
-.sound-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    cursor: pointer;
-}
-
-.sound-toggle input {
-    display: none;
-}
-
-.sound-toggle span {
-    font-size: 1.2rem;
-    opacity: 0.5;
-}
-
-.sound-toggle input:checked + span {
-    opacity: 1;
 }
 
 .toast {
@@ -343,7 +323,6 @@ main {
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    width: 100%;
 }
 
 .btn:hover {
@@ -484,24 +463,21 @@ main {
 @media (max-width: 800px) {
     main {
         grid-template-columns: 1fr;
-        gap: 10px;
     }
     
     .board-section {
         order: 1;
     }
     
-    .left-panel,
-    .right-panel {
+    .side-panel {
         order: 2;
         flex-direction: row;
         flex-wrap: wrap;
     }
     
-    .left-panel > *,
-    .right-panel > * {
+    .side-panel > * {
         flex: 1;
-        min-width: 140px;
+        min-width: 150px;
     }
     
     #board {

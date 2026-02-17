@@ -155,12 +155,14 @@ function loadGame() {
         
         if (typeof ChessGame !== 'undefined') {
             currentGame = new ChessGame();
+            currentGame.createBoard();
         }
     } else if (gameId === 'sudoku') {
         if (gameTitle) gameTitle.textContent = `${GAMES[gameId].icon} ${GAMES[gameId].name[currentLang]} ${GAMES[gameId].icon}`;
         
         if (typeof SudokuGame !== 'undefined') {
             currentGame = new SudokuGame();
+            currentGame.createBoard();
         }
     }
 }

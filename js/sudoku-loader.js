@@ -86,6 +86,8 @@ function loadSudoku() {
     
     if (typeof SudokuGame !== 'undefined') {
         currentGame = new SudokuGame();
+        currentGame.createBoard();
+        currentGame.render();
     }
 }
 

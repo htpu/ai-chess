@@ -7,6 +7,7 @@ class GomokuGame {
         this.gameOver = false;
         this.mode = 'pvc';
         this.difficulty = 2;
+        this.playerColor = 'black';
         
         this.init();
     }
@@ -14,7 +15,16 @@ class GomokuGame {
     init() {
         this.createBoard();
         this.bindEvents();
-        this.newGame();
+    }
+
+    newGame() {
+        this.board = new Array(this.boardSize * this.boardSize).fill(null);
+        this.currentPlayer = this.playerColor || 'black';
+        this.undoStack = [];
+        this.gameOver = false;
+        
+        this.render();
+        this.updatePlayerIndicator();
     }
 
     t(key) {
@@ -880,16 +890,6 @@ class GomokuGame {
         this.gameOver = true;
         const winner = this.currentPlayer === 'black' ? t('white') : t('black');
         this.showMessage(`${t(winner === t('white') ? 'whiteWins' : 'blackWins')}`, 'win');
-    }
-
-    newGame() {
-        this.board = new Array(this.boardSize * this.boardSize).fill(null);
-        this.currentPlayer = 'black';
-        this.undoStack = [];
-        this.gameOver = false;
-        
-        this.render();
-        this.updatePlayerIndicator();
     }
 
     render() {

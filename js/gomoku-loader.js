@@ -26,6 +26,7 @@ const translations = {
         resign: '认输',
         mode: '模式',
         difficulty: '难度',
+        playerColor: '执子',
         pvp: '双人对战',
         pvc: '人机对战',
         easy: '简单',
@@ -46,6 +47,7 @@ const translations = {
         resign: 'Resign',
         mode: 'Mode',
         difficulty: 'Difficulty',
+        playerColor: 'Play as',
         pvp: 'PvP',
         pvc: 'PvC',
         easy: 'Easy',
@@ -88,8 +90,17 @@ function loadGomoku() {
         startGameWithSettings();
     };
     
+    document.getElementById('gameMode').addEventListener('change', (e) => {
+        const playerColorGroup = document.getElementById('playerColorGroup');
+        if (playerColorGroup) {
+            playerColorGroup.style.display = e.target.value === 'pvc' ? 'flex' : 'none';
+        }
+    });
+    
     if (typeof GomokuGame !== 'undefined') {
         currentGame = new GomokuGame();
+        currentGame.createBoard();
+        currentGame.render();
     }
 }
 
@@ -105,6 +116,15 @@ function showNewGameModal() {
         document.querySelectorAll('#newGameModal #difficulty option').forEach(opt => {
             opt.textContent = opt.dataset[currentLang];
         });
+        document.querySelectorAll('#newGameModal #playerColor option').forEach(opt => {
+            opt.textContent = opt.dataset[currentLang];
+        });
+        
+        const mode = document.getElementById('gameMode').value;
+        const playerColorGroup = document.getElementById('playerColorGroup');
+        if (playerColorGroup) {
+            playerColorGroup.style.display = mode === 'pvc' ? 'flex' : 'none';
+        }
     }
 }
 
@@ -114,7 +134,14 @@ function startGameWithSettings() {
         modal.classList.add('hidden');
     }
     
-    if (currentGame && currentGame.newGame) {
+    const mode = document.getElementById('gameMode').value;
+    const difficulty = parseInt(document.getElementById('difficulty').value);
+    const playerColor = document.getElementById('playerColor').value;
+    
+    if (currentGame) {
+        currentGame.mode = mode;
+        currentGame.difficulty = difficulty;
+        currentGame.playerColor = playerColor;
         currentGame.newGame();
     }
 }
@@ -144,6 +171,15 @@ function updateUITexts() {
     
     const startGameBtn = document.getElementById('startGame');
     if (startGameBtn) startGameBtn.textContent = t('startGame');
+    
+    const modeLabel = document.getElementById('modeLabel');
+    if (modeLabel) modeLabel.textContent = t('mode') + ':';
+    
+    const diffLabel = document.getElementById('difficultyLabel');
+    if (diffLabel) diffLabel.textContent = t('difficulty') + ':';
+    
+    const colorLabel = document.getElementById('playerColorLabel');
+    if (colorLabel) colorLabel.textContent = t('playerColor') + ':';
     
     updateGameInfo('');
 }

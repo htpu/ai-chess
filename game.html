@@ -26,7 +26,16 @@
         </header>
 
         <main>
-            <aside class="left-panel">
+            <section class="board-section">
+                <div id="board"></div>
+                <div class="board-controls">
+                    <button id="undoMove" class="btn"></button>
+                    <button id="resign" class="btn"></button>
+                </div>
+                <div id="thinking" class="thinking hidden"></div>
+            </section>
+
+            <aside class="side-panel">
                 <div class="control-panel">
                     <h3 id="controlTitle"></h3>
                     <div class="game-info">
@@ -47,21 +56,6 @@
                         <span id="status"></span>
                     </div>
                 </div>
-            </aside>
-
-            <section class="board-section">
-                <div id="board"></div>
-                <div id="thinking" class="thinking hidden"></div>
-            </section>
-
-            <aside class="right-panel">
-                <button id="undoMove" class="btn"></button>
-                <button id="resign" class="btn"></button>
-                <button id="flipBoard" class="btn"></button>
-                <label class="sound-toggle">
-                    <input type="checkbox" id="soundToggle">
-                    <span>🔊</span>
-                </label>
             </aside>
         </main>
     </div>
