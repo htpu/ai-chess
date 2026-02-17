@@ -139,7 +139,7 @@ class ChessGame {
             onDragStart: this.onDragStart.bind(this),
             onDrop: this.onDrop.bind(this),
             onSnapEnd: this.onSnapEnd.bind(this),
-            pieceTheme: 'https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/img/chesspieces/wikipedia/{piece}.png'
+            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
         };
 
         this.board = Chessboard('board', config);
