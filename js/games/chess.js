@@ -75,20 +75,26 @@ class ChessGame {
     }
 
     init() {
-        currentLang = localStorage.getItem('language') || 'zh';
+        try {
+            localStorage.setItem('test', 'test');
+            localStorage.removeItem('test');
+            currentLang = localStorage.getItem('language') || 'zh';
+        } catch (e) {
+            currentLang = 'zh';
+        }
         
         const soundToggle = document.getElementById('soundToggle');
         soundEnabled = soundToggle ? soundToggle.checked : true;
         
-        const savedGameState = localStorage.getItem('chessGameState');
         let hasSavedGame = false;
-        if (savedGameState) {
-            try {
+        try {
+            const savedGameState = localStorage.getItem('chessGameState');
+            if (savedGameState) {
                 const state = JSON.parse(savedGameState);
                 hasSavedGame = state.fen && state.fen !== 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-            } catch (e) {
-                hasSavedGame = false;
             }
+        } catch (e) {
+            hasSavedGame = false;
         }
         
         this.initStockfish();
@@ -106,7 +112,10 @@ class ChessGame {
         const stockfishUrl = 'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.0/stockfish.js';
         
         fetch(stockfishUrl)
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
             .then(code => {
                 const blob = new Blob([code], { type: 'application/javascript' });
                 const url = URL.createObjectURL(blob);
@@ -128,6 +137,7 @@ class ChessGame {
             })
             .catch(err => {
                 console.error('Failed to load Stockfish:', err);
+                this.showToast(this.t('aiLoadFailed') || 'AI加载失败');
             });
     }
 

@@ -477,6 +477,8 @@ main {
     
     .board-section {
         order: 1;
+        align-items: center;
+        width: 100%;
     }
     
     .side-panel {
@@ -491,31 +493,93 @@ main {
     }
     
     #board {
-        max-width: 300px;
+        max-width: 360px;
     }
     
     .toolbar {
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .toolbar-left,
+    .toolbar-center,
+    .toolbar-right {
+        flex: none;
+    }
+    
+    .toolbar-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
     }
 }
 
 @media (max-width: 500px) {
     .container {
+        padding: 6px;
+    }
+    
+    .toolbar {
         padding: 8px;
     }
     
     .toolbar h1 {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+    
+    .icon-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
     }
     
     .game-info-bar {
-        font-size: 0.75rem;
-        padding: 4px 12px;
+        font-size: 0.7rem;
+        padding: 3px 8px;
     }
     
     .btn {
-        padding: 6px 10px;
-        font-size: 0.75rem;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+    
+    #board {
+        max-width: 280px;
+    }
+    
+    .board-controls {
+        width: 100%;
+    }
+    
+    .board-controls .btn {
+        flex: 1;
+    }
+    
+    .side-panel > * {
+        min-width: 120px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        min-width: 260px;
+        margin: 10px;
+    }
+    
+    .option-group select {
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .toolbar h1 {
+        font-size: 0.9rem;
+    }
+    
+    #board {
+        max-width: 240px;
     }
 }

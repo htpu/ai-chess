@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Chess - Play chess against AI with multiple difficulty levels">
     <title>AI Chess</title>
-    <meta name="version" content="v1.9.4">
+    <meta name="version" content="v1.9.5">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♔</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <header class="toolbar">
+        <header class="toolbar" role="banner">
             <div class="toolbar-left">
-                <button id="backToHome" class="icon-btn">🏠</button>
+                <button id="backToHome" class="icon-btn" aria-label="返回首页">🏠</button>
                 <h1 id="gameTitle">♔ Chess ♚</h1>
             </div>
             <div class="toolbar-center">
-                <div class="game-info-bar">
+                <div class="game-info-bar" role="status" aria-live="polite">
                     <span id="gameInfo">-</span>
                 </div>
             </div>
             <div class="toolbar-right">
-                <button id="newGame" class="btn primary"></button>
+                <button id="newGame" class="btn primary" aria-label="新游戏"></button>
             </div>
         </header>
 
-        <main>
-            <section class="board-section">
-                <div id="board"></div>
-                <div class="board-controls">
-                    <button id="undoMove" class="btn"></button>
-                    <button id="resign" class="btn"></button>
+        <main role="main">
+            <section class="board-section" aria-label="棋盘">
+                <div id="board" role="application" aria-label="国际象棋棋盘"></div>
+                <div class="board-controls" role="group" aria-label="游戏控制">
+                    <button id="undoMove" class="btn" aria-label="撤销上一步"></button>
+                    <button id="resign" class="btn" aria-label="认输"></button>
                 </div>
-                <div id="thinking" class="thinking hidden"></div>
+                <div id="thinking" class="thinking hidden" role="status" aria-live="assertive"></div>
             </section>
 
-            <aside class="side-panel">
+            <aside class="side-panel" role="complementary" aria-label="游戏信息">
                 <div class="control-panel">
                     <h3 id="controlTitle"></h3>
                     <div class="game-info">
                         <div class="info-row">
                             <span id="turnLabel"></span>
-                            <span id="turnIndicator"></span>
+                            <span id="turnIndicator" role="status" aria-live="polite"></span>
                         </div>
                         <div class="info-row">
                             <span id="movesLabel"></span>
@@ -51,8 +53,8 @@
                 </div>
                 <div class="history-panel">
                     <h3 id="historyTitle"></h3>
-                    <div id="moveHistory"></div>
-                    <div class="status">
+                    <div id="moveHistory" role="log" aria-live="polite"></div>
+                    <div class="status" role="status">
                         <span id="status"></span>
                     </div>
                 </div>
@@ -60,13 +62,13 @@
         </main>
     </div>
 
-    <div id="newGameModal" class="modal hidden">
+    <div id="newGameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="newGameTitle">
         <div class="modal-content">
             <h2 id="newGameTitle"></h2>
             <div class="modal-options">
                 <div class="option-group">
-                    <label id="difficultyLabel"></label>
-                    <select id="difficulty">
+                    <label id="difficultyLabel" for="difficulty"></label>
+                    <select id="difficulty" aria-label="选择难度">
                         <option value="1" data-zh="等级 1" data-en="Lvl 1">等级 1</option>
                         <option value="2" data-zh="等级 2" data-en="Lvl 2">等级 2</option>
                         <option value="3" selected data-zh="等级 3" data-en="Lvl 3">等级 3</option>
@@ -75,8 +77,8 @@
                     </select>
                 </div>
                 <div class="option-group">
-                    <label id="playerColorLabel"></label>
-                    <select id="playerColor">
+                    <label id="playerColorLabel" for="playerColor"></label>
+                    <select id="playerColor" aria-label="选择执子颜色">
                         <option value="white" selected data-zh="白方" data-en="White">白方</option>
                         <option value="black" data-zh="黑方" data-en="Black">黑方</option>
                     </select>
@@ -86,7 +88,7 @@
         </div>
     </div>
 
-    <div id="gameOverModal" class="modal hidden">
+    <div id="gameOverModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
         <div class="modal-content">
             <h2 id="gameOverTitle"></h2>
             <p id="gameOverMessage"></p>
@@ -94,14 +96,14 @@
         </div>
     </div>
 
-    <div id="promotionModal" class="modal hidden">
+    <div id="promotionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="promotionTitle">
         <div class="modal-content promotion-content">
             <h3 id="promotionTitle"></h3>
-            <div id="promotionOptions"></div>
+            <div id="promotionOptions" role="group" aria-label="升变选择"></div>
         </div>
     </div>
 
-    <div id="toast" class="toast hidden"></div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
